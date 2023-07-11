@@ -15,3 +15,6 @@ target/
 *.iws
 *.iml
 *.ipr
+
+/starter/critter/set-java-home.sh
+*.swp
