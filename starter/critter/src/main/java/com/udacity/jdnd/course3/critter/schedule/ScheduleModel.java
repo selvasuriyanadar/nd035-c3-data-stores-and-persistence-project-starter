@@ -17,9 +17,9 @@ public class ScheduleModel {
     @Id
     @GeneratedValue(strategy = GenerationType.AUTO)
     private long id;
-    @OneToMany
+    @ManyToMany
     private List<EmployeeModel> employees;
-    @OneToMany
+    @ManyToMany
     private List<PetModel> pets;
     private LocalDate date;
     @ElementCollection

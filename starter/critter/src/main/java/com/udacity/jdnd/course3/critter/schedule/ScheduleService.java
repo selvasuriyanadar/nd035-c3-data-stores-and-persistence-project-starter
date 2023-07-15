@@ -1,5 +1,6 @@
-package com.udacity.jdnd.course3.critter.pet;
+package com.udacity.jdnd.course3.critter.schedule;
 
+import com.udacity.jdnd.course3.critter.util.BeanUtil;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.stereotype.Service;
@@ -10,14 +11,14 @@ import java.time.DayOfWeek;
 import java.util.*;
 
 @Service
-public class PetService {
+public class ScheduleService {
 
     @Autowired
-    PetRepository petRepository;
+    private ScheduleRepository scheduleRepository;
 
     @Transactional
-    public PetModel savePet(PetModel model) {
-        return petRepository.save(model);
+    public ScheduleModel createSchedule(ScheduleModel scheduleModel) {
+        return scheduleRepository.save(scheduleModel);
     }
 
 }

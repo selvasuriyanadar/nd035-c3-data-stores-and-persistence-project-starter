@@ -10,4 +10,14 @@ import java.util.*;
 
 @Repository
 public interface ScheduleRepository extends JpaRepository<ScheduleModel, Long> {
+
+    @Query("select a from ScheduleModel a where a.id in (select distinct a.id from ScheduleModel a join a.pets p where p.id = ?1)")
+    public List<ScheduleModel> fetchByPetId(long petId);
+
+    @Query("select a from ScheduleModel a where a.id in (select distinct a.id from ScheduleModel a join a.employees e where e.id = ?1)")
+    public List<ScheduleModel> fetchByEmployeeId(long employeeId);
+
+    @Query("select a from ScheduleModel a where a.id in (select distinct a.id from ScheduleModel a join a.pets p join p.owner o where o.id = ?1)")
+    public List<ScheduleModel> fetchByCustomerId(long customerId);
+
 }

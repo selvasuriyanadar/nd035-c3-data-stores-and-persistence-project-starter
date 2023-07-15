@@ -47,14 +47,20 @@ public class UserController {
                 return entityManager.getReference(PetModel.class, petId);
             }).toList());
         }
-        return BeanUtil.transfer(userService.saveCustomer(model), new CustomerDTO());
+        CustomerDTO customerDTOResponse = BeanUtil.transfer(userService.saveCustomer(model), new CustomerDTO());
+        if (model.getPets() != null) {
+            customerDTOResponse.setPetIds(model.getPets().stream().map(pet -> pet.getId()).toList());
+        }
+        return customerDTOResponse;
     }
 
     @GetMapping("/customer")
     public List<CustomerDTO> getAllCustomers(){
         return customerRepository.findAll().stream().map(model -> {
             CustomerDTO customerDTOResponse = BeanUtil.transfer(model, new CustomerDTO());
-            customerDTOResponse.setPetIds(model.getPets().stream().map(pet -> pet.getId()).toList());
+            if (model.getPets() != null) {
+                customerDTOResponse.setPetIds(model.getPets().stream().map(pet -> pet.getId()).toList());
+            }
             return customerDTOResponse;
         }).toList();
     }
