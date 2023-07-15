@@ -11,6 +11,7 @@ import java.util.List;
 public class CustomerModel extends UserModel {
 
     private String phoneNumber;
+    @Column(length = 1000)
     private String notes;
     @OneToMany
     private List<PetModel> pets;

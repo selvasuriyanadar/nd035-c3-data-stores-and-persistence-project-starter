@@ -1,10 +1,14 @@
 package com.udacity.jdnd.course3.critter.user;
 
+import com.udacity.jdnd.course3.critter.pet.PetModel;
+
+import com.udacity.jdnd.course3.critter.util.BeanUtil;
 import org.springframework.web.bind.annotation.*;
+import org.springframework.beans.factory.annotation.Autowired;
+import jakarta.persistence.EntityManager;
 
 import java.time.DayOfWeek;
-import java.util.List;
-import java.util.Set;
+import java.util.*;
 
 /**
  * Handles web requests related to Users.
@@ -16,39 +20,67 @@ import java.util.Set;
 @RequestMapping("/user")
 public class UserController {
 
+    @Autowired
+    private UserService userService;
+
+    @Autowired
+    private EntityManager entityManager;
+
+    @Autowired
+    private CustomerRepository customerRepository;
+
+    @Autowired
+    private EmployeeRepository employeeRepository;
+
     @PostMapping("/customer")
     public CustomerDTO saveCustomer(@RequestBody CustomerDTO customerDTO){
-        throw new UnsupportedOperationException();
+        CustomerModel model = BeanUtil.transfer(customerDTO, new CustomerModel());
+        if (customerDTO.getPetIds() != null) {
+            model.setPets(customerDTO.getPetIds().stream().distinct().map(petId -> entityManager.getReference(PetModel.class, petId)).toList());
+        }
+        return BeanUtil.transfer(userService.saveCustomer(model), new CustomerDTO());
     }
 
     @GetMapping("/customer")
     public List<CustomerDTO> getAllCustomers(){
-        throw new UnsupportedOperationException();
+        return customerRepository.findAll().stream().map(model -> BeanUtil.transfer(model, new CustomerDTO())).toList();
     }
 
     @GetMapping("/customer/pet/{petId}")
     public CustomerDTO getOwnerByPet(@PathVariable long petId){
-        throw new UnsupportedOperationException();
+        Optional<CustomerModel> modelOpt = customerRepository.fetchByPetId(petId);
+        if (modelOpt.isEmpty()) {
+            throw new IllegalArgumentException("Could not find the owner of the pet.");
+        }
+        return BeanUtil.transfer(modelOpt.get(), new CustomerDTO());
     }
 
     @PostMapping("/employee")
     public EmployeeDTO saveEmployee(@RequestBody EmployeeDTO employeeDTO) {
-        throw new UnsupportedOperationException();
+        return BeanUtil.transfer(userService.saveEmployee(BeanUtil.transfer(employeeDTO, new EmployeeModel())), new EmployeeDTO());
     }
 
     @PostMapping("/employee/{employeeId}")
     public EmployeeDTO getEmployee(@PathVariable long employeeId) {
-        throw new UnsupportedOperationException();
+        Optional<EmployeeModel> modelOpt = employeeRepository.findById(employeeId);
+        if (modelOpt.isEmpty()) {
+            throw new IllegalArgumentException("Could not find Employee.");
+        }
+        return BeanUtil.transfer(modelOpt.get(), new EmployeeDTO());
     }
 
     @PutMapping("/employee/{employeeId}")
     public void setAvailability(@RequestBody Set<DayOfWeek> daysAvailable, @PathVariable long employeeId) {
-        throw new UnsupportedOperationException();
+        Optional<EmployeeModel> modelOpt = employeeRepository.findById(employeeId);
+        if (modelOpt.isEmpty()) {
+            throw new IllegalArgumentException("Could not find Employee.");
+        }
+        userService.setAvailability(daysAvailable, modelOpt.get());
     }
 
     @GetMapping("/employee/availability")
     public List<EmployeeDTO> findEmployeesForService(@RequestBody EmployeeRequestDTO employeeDTO) {
-        throw new UnsupportedOperationException();
+        return employeeRepository.fetchBySkillsAndAvailableDay(employeeDTO.getSkills(), employeeDTO.getDate().getDayOfWeek()).stream().map(model -> BeanUtil.transfer(model, new EmployeeDTO())).toList();
     }
 
 }

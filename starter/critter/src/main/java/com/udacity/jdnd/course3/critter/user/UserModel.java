@@ -1,6 +1,7 @@
 package com.udacity.jdnd.course3.critter.user;
 
 import org.hibernate.annotations.GenericGenerator;
+import org.hibernate.annotations.Nationalized;
 import jakarta.persistence.*;
 
 import java.util.List;
@@ -16,6 +17,7 @@ public abstract class UserModel {
     @Id
     @GeneratedValue(strategy = GenerationType.AUTO)
     private long id;
+    @Nationalized
     private String name;
 
     public long getId() {

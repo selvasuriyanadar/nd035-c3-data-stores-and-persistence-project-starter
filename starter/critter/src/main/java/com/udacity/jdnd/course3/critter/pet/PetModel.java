@@ -3,6 +3,7 @@ package com.udacity.jdnd.course3.critter.pet;
 import com.udacity.jdnd.course3.critter.user.CustomerModel;
 
 import org.hibernate.annotations.GenericGenerator;
+import org.hibernate.annotations.Nationalized;
 import jakarta.persistence.*;
 
 import java.time.LocalDate;
@@ -15,10 +16,12 @@ public class PetModel {
     private long id;
     @Enumerated(EnumType.STRING)
     private PetType type;
+    @Nationalized
     private String name;
     @OneToOne
     private CustomerModel owner;
     private LocalDate birthDate;
+    @Column(length = 1000)
     private String notes;
 
     public PetType getType() {
