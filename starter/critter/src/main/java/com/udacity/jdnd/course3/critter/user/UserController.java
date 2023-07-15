@@ -1,6 +1,7 @@
 package com.udacity.jdnd.course3.critter.user;
 
 import com.udacity.jdnd.course3.critter.pet.PetModel;
+import com.udacity.jdnd.course3.critter.pet.PetRepository;
 
 import com.udacity.jdnd.course3.critter.util.BeanUtil;
 import org.springframework.web.bind.annotation.*;
@@ -32,18 +33,30 @@ public class UserController {
     @Autowired
     private EmployeeRepository employeeRepository;
 
+    @Autowired
+    private PetRepository petRepository;
+
     @PostMapping("/customer")
     public CustomerDTO saveCustomer(@RequestBody CustomerDTO customerDTO){
         CustomerModel model = BeanUtil.transfer(customerDTO, new CustomerModel());
         if (customerDTO.getPetIds() != null) {
-            model.setPets(customerDTO.getPetIds().stream().distinct().map(petId -> entityManager.getReference(PetModel.class, petId)).toList());
+            model.setPets(customerDTO.getPetIds().stream().distinct().map(petId -> {
+                if (!petRepository.existsById(petId)) {
+                    throw new IllegalArgumentException("Pet Not Found.");
+                }
+                return entityManager.getReference(PetModel.class, petId);
+            }).toList());
         }
         return BeanUtil.transfer(userService.saveCustomer(model), new CustomerDTO());
     }
 
     @GetMapping("/customer")
     public List<CustomerDTO> getAllCustomers(){
-        return customerRepository.findAll().stream().map(model -> BeanUtil.transfer(model, new CustomerDTO())).toList();
+        return customerRepository.findAll().stream().map(model -> {
+            CustomerDTO customerDTOResponse = BeanUtil.transfer(model, new CustomerDTO());
+            customerDTOResponse.setPetIds(model.getPets().stream().map(pet -> pet.getId()).toList());
+            return customerDTOResponse;
+        }).toList();
     }
 
     @GetMapping("/customer/pet/{petId}")
@@ -52,7 +65,9 @@ public class UserController {
         if (modelOpt.isEmpty()) {
             throw new IllegalArgumentException("Could not find the owner of the pet.");
         }
-        return BeanUtil.transfer(modelOpt.get(), new CustomerDTO());
+        CustomerDTO customerDTOResponse = BeanUtil.transfer(modelOpt.get(), new CustomerDTO());
+        customerDTOResponse.setPetIds(modelOpt.get().getPets().stream().map(pet -> pet.getId()).toList());
+        return customerDTOResponse;
     }
 
     @PostMapping("/employee")

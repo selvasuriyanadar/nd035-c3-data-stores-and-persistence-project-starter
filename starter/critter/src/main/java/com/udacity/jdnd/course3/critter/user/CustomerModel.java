@@ -13,7 +13,7 @@ public class CustomerModel extends UserModel {
     private String phoneNumber;
     @Column(length = 1000)
     private String notes;
-    @OneToMany
+    @OneToMany(mappedBy = "owner")
     private List<PetModel> pets;
 
     public String getPhoneNumber() {

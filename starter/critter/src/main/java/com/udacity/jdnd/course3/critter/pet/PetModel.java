@@ -18,7 +18,8 @@ public class PetModel {
     private PetType type;
     @Nationalized
     private String name;
-    @OneToOne
+    @ManyToOne
+    @JoinColumn(name = "owner_id", referencedColumnName = "id")
     private CustomerModel owner;
     private LocalDate birthDate;
     @Column(length = 1000)
