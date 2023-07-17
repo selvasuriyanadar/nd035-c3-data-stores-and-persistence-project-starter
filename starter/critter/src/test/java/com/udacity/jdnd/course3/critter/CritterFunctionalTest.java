@@ -53,9 +53,7 @@ public class CritterFunctionalTest {
         CustomerDTO customerDTO = createCustomerDTO();
         CustomerDTO newCustomer = userController.saveCustomer(customerDTO);
 
-        Session session = entityManager.unwrap(Session.class);
-        session.flush();
-        session.clear();
+        flushAndClearSession(entityManager);
 
         CustomerDTO retrievedCustomer = userController.getAllCustomers().get(0);
         Assertions.assertEquals(newCustomer.getName(), customerDTO.getName());
@@ -94,9 +92,7 @@ public class CritterFunctionalTest {
         Assertions.assertEquals(newPet.getId(), pets.get(0).getId());
         Assertions.assertEquals(newPet.getName(), pets.get(0).getName());
 
-        Session session = entityManager.unwrap(Session.class);
-        session.flush();
-        session.clear();
+        flushAndClearSession(entityManager);
 
         //check to make sure customer now also contains pet
         CustomerDTO retrievedCustomer = userController.getAllCustomers().get(0);
@@ -131,9 +127,7 @@ public class CritterFunctionalTest {
         petDTO.setOwnerId(newCustomer.getId());
         PetDTO newPet = petController.savePet(petDTO);
 
-        Session session = entityManager.unwrap(Session.class);
-        session.flush();
-        session.clear();
+        flushAndClearSession(entityManager);
 
         CustomerDTO owner = userController.getOwnerByPet(newPet.getId());
         Assertions.assertEquals(owner.getId(), newCustomer.getId());
@@ -252,9 +246,7 @@ public class CritterFunctionalTest {
         compareSchedules(sched2, scheds2p.get(0));
         compareSchedules(sched3, scheds2p.get(1));
 
-        Session session = entityManager.unwrap(Session.class);
-        session.flush();
-        session.clear();
+        flushAndClearSession(entityManager);
 
         //Owner of the first pet will only be in schedule 1
         List<ScheduleDTO> scheds1c = scheduleController.getScheduleForCustomer(userController.getOwnerByPet(sched1.getPetIds().get(0)).getId());
@@ -326,6 +318,12 @@ public class CritterFunctionalTest {
         Assertions.assertEquals(sched1.getActivities(), sched2.getActivities());
         Assertions.assertEquals(sched1.getEmployeeIds(), sched2.getEmployeeIds());
         Assertions.assertEquals(sched1.getDate(), sched2.getDate());
+    }
+
+    public static void flushAndClearSession(EntityManager entityManager) {
+        Session session = entityManager.unwrap(Session.class);
+        session.flush();
+        session.clear();
     }
 
 }

@@ -7,7 +7,7 @@ import com.udacity.jdnd.course3.critter.util.BeanUtil;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.beans.factory.annotation.Autowired;
 
-import java.util.List;
+import java.util.*;
 import java.util.stream.Collectors;
 
 /**
@@ -105,4 +105,14 @@ public class ScheduleController {
             return scheduleDTOResponse;
         }).toList();
     }
+
+    @DeleteMapping("/{scheduleId}")
+    public void deleteSchedule(@PathVariable long scheduleId) {
+        Optional<ScheduleModel> modelOpt = scheduleRepository.findById(scheduleId);
+        if (modelOpt.isEmpty()) {
+            throw new IllegalArgumentException("Schedule Not Found.");
+        }
+        scheduleService.deleteSchedule(modelOpt.get());
+    }
+
 }

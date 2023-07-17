@@ -62,6 +62,15 @@ public class UserController {
         return customerDTOResponse;
     }
 
+    @DeleteMapping("/customer/{customerId}")
+    public void deleteCustomer(@PathVariable long customerId) {
+        Optional<CustomerModel> modelOpt = customerRepository.findById(customerId);
+        if (modelOpt.isEmpty()) {
+            throw new IllegalArgumentException("Customer Not Found.");
+        }
+        userService.deleteCustomer(modelOpt.get());
+    }
+
     @PostMapping("/employee")
     public EmployeeDTO saveEmployee(@RequestBody EmployeeDTO employeeDTO) {
         return BeanUtil.transfer(userService.saveEmployee(BeanUtil.transfer(employeeDTO, new EmployeeModel())), new EmployeeDTO());
@@ -91,4 +100,19 @@ public class UserController {
         return employeeRepository.fetchBySkillsAndAvailableDay(employeeDTO.getSkills(), employeeDTO.getDate().getDayOfWeek()).stream().map(model -> BeanUtil.transfer(model, new EmployeeDTO())).toList();
     }
 
+    @GetMapping("/employee")
+    public List<EmployeeDTO> getAllEmployees(){
+        return employeeRepository.findAll().stream().map(model -> {
+            return BeanUtil.transfer(model, new EmployeeDTO());
+        }).toList();
+    }
+
+    @DeleteMapping("/employee/{employeeId}")
+    public void deleteEmployee(@PathVariable long employeeId) {
+        Optional<EmployeeModel> modelOpt = employeeRepository.findById(employeeId);
+        if (modelOpt.isEmpty()) {
+            throw new IllegalArgumentException("Employee Not Found.");
+        }
+        userService.deleteEmployee(modelOpt.get());
+    }
 }

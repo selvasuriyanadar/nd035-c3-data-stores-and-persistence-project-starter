@@ -25,7 +25,7 @@ public class PetModel {
     private String name;
 
     @NotNull(message = "Owner is required.")
-    @ManyToOne
+    @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "owner_id", referencedColumnName = "id")
     private CustomerModel owner;
 

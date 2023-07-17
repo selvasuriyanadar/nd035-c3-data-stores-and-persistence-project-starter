@@ -59,4 +59,13 @@ public class PetController {
             return petDTOResponse;
         }).toList();
     }
+
+    @DeleteMapping("/{petId}")
+    public void deletePet(@PathVariable long petId) {
+        Optional<PetModel> modelOpt = petRepository.findById(petId);
+        if (modelOpt.isEmpty()) {
+            throw new IllegalArgumentException("Pet Not Found.");
+        }
+        petService.deletePet(modelOpt.get());
+    }
 }

@@ -5,6 +5,7 @@ import com.udacity.jdnd.course3.critter.pet.PetModel;
 import com.udacity.jdnd.course3.critter.user.EmployeeRepository;
 import com.udacity.jdnd.course3.critter.pet.PetRepository;
 
+import jakarta.validation.Valid;
 import com.udacity.jdnd.course3.critter.util.BeanUtil;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.transaction.annotation.Transactional;
@@ -31,7 +32,7 @@ public class ScheduleService {
     private PetRepository petRepository;
 
     @Transactional
-    public ScheduleModel createSchedule(ScheduleModel scheduleModel) {
+    public ScheduleModel createSchedule(@Valid ScheduleModel scheduleModel) {
         scheduleModel.setEmployees(scheduleModel.getEmployees().stream().filter(BeanUtil.distinctByKey(EmployeeModel::getId)).map(employee -> {
             if (!employeeRepository.existsById(employee.getId())) {
                 throw new IllegalArgumentException("Employee Not Found.");
@@ -45,6 +46,11 @@ public class ScheduleService {
             return entityManager.getReference(PetModel.class, pet.getId());
         }).toList());
         return scheduleRepository.save(scheduleModel);
+    }
+
+    @Transactional
+    public void deleteSchedule(ScheduleModel scheduleModel) {
+        scheduleRepository.delete(scheduleModel);
     }
 
 }
