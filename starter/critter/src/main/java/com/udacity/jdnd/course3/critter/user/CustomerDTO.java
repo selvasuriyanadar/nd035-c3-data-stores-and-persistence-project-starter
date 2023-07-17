@@ -1,5 +1,7 @@
 package com.udacity.jdnd.course3.critter.user;
 
+import com.fasterxml.jackson.annotation.JsonProperty;
+
 import java.util.List;
 
 /**
@@ -7,10 +9,12 @@ import java.util.List;
  * to the database directly.
  */
 public class CustomerDTO {
+    @JsonProperty(access = JsonProperty.Access.READ_ONLY)
     private long id;
     private String name;
     private String phoneNumber;
     private String notes;
+    @JsonProperty(access = JsonProperty.Access.READ_ONLY)
     private List<Long> petIds;
 
     public long getId() {

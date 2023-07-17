@@ -4,6 +4,8 @@ import com.udacity.jdnd.course3.critter.user.EmployeeSkill;
 import com.udacity.jdnd.course3.critter.user.EmployeeModel;
 import com.udacity.jdnd.course3.critter.pet.PetModel;
 
+import jakarta.validation.constraints.NotEmpty;
+import jakarta.validation.constraints.NotNull;
 import org.hibernate.annotations.GenericGenerator;
 import jakarta.persistence.*;
 
@@ -17,11 +19,19 @@ public class ScheduleModel {
     @Id
     @GeneratedValue(strategy = GenerationType.AUTO)
     private long id;
+
+    @NotEmpty(message = "Employees in a schedule shall not be empty.")
     @ManyToMany
     private List<EmployeeModel> employees;
+
+    @NotEmpty(message = "Pets in a schedule shall not be empty.")
     @ManyToMany
     private List<PetModel> pets;
+
+    @NotNull(message = "Scheduled Date is required.")
     private LocalDate date;
+
+    @NotEmpty(message = "Activities the Employees are expected to carry out are required.")
     @ElementCollection
     @Enumerated(EnumType.STRING)
     private Set<EmployeeSkill> activities;

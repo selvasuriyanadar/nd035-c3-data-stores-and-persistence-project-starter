@@ -26,9 +26,6 @@ public class PetService {
 
     @Transactional
     public PetModel savePet(PetModel model) {
-        if (model.getType() == null || model.getOwner() == null || model.getName() == null) {
-            throw new IllegalArgumentException("Type, Owner, Name are all required.");
-        }
         if (!customerRepository.existsById(model.getOwner().getId())) {
             throw new IllegalArgumentException("Customer Not Found.");
         }

@@ -2,6 +2,7 @@ package com.udacity.jdnd.course3.critter.pet;
 
 import com.udacity.jdnd.course3.critter.user.CustomerModel;
 
+import jakarta.validation.constraints.NotNull;
 import org.hibernate.annotations.GenericGenerator;
 import org.hibernate.annotations.Nationalized;
 import jakarta.persistence.*;
@@ -14,14 +15,22 @@ public class PetModel {
     @Id
     @GeneratedValue(strategy = GenerationType.AUTO)
     private long id;
+
+    @NotNull(message = "Type is required.")
     @Enumerated(EnumType.STRING)
     private PetType type;
+
+    @NotNull(message = "Name is required.")
     @Nationalized
     private String name;
+
+    @NotNull(message = "Owner is required.")
     @ManyToOne
     @JoinColumn(name = "owner_id", referencedColumnName = "id")
     private CustomerModel owner;
+
     private LocalDate birthDate;
+
     @Column(length = 1000)
     private String notes;
 

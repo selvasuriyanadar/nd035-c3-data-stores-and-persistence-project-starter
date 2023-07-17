@@ -1,6 +1,7 @@
 package com.udacity.jdnd.course3.critter.user;
 
 import org.hibernate.annotations.GenericGenerator;
+import jakarta.validation.constraints.NotEmpty;
 import jakarta.persistence.*;
 
 import java.time.DayOfWeek;
@@ -9,9 +10,12 @@ import java.util.Set;
 @Entity
 public class EmployeeModel extends UserModel {
 
+    @NotEmpty(message = "Skills are required.")
     @ElementCollection
     @Enumerated(EnumType.STRING)
     private Set<EmployeeSkill> skills;
+
+    @NotEmpty(message = "Days Available are required.")
     @ElementCollection
     @Enumerated(EnumType.STRING)
     private Set<DayOfWeek> daysAvailable;

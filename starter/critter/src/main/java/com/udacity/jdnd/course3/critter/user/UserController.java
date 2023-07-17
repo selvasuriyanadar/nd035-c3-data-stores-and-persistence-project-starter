@@ -31,13 +31,6 @@ public class UserController {
     @PostMapping("/customer")
     public CustomerDTO saveCustomer(@RequestBody CustomerDTO customerDTO){
         CustomerModel model = BeanUtil.transfer(customerDTO, new CustomerModel());
-        if (customerDTO.getPetIds() != null) {
-            model.setPets(customerDTO.getPetIds().stream().distinct().filter(petId -> (petId != null)).map(petId -> {
-                PetModel petModel = new PetModel();
-                petModel.setId(petId);
-                return petModel;
-            }).toList());
-        }
         CustomerDTO customerDTOResponse = BeanUtil.transfer(userService.saveCustomer(model), new CustomerDTO());
         if (model.getPets() != null) {
             customerDTOResponse.setPetIds(model.getPets().stream().map(pet -> pet.getId()).toList());
@@ -80,7 +73,8 @@ public class UserController {
         if (modelOpt.isEmpty()) {
             throw new IllegalArgumentException("Could not find Employee.");
         }
-        userService.setAvailability(daysAvailable, modelOpt.get());
+        modelOpt.get().setDaysAvailable(daysAvailable);
+        userService.saveEmployee(modelOpt.get());
     }
 
     @GetMapping("/employee/{employeeId}")

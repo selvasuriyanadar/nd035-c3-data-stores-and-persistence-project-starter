@@ -1,5 +1,7 @@
 package com.udacity.jdnd.course3.critter.user;
 
+import com.fasterxml.jackson.annotation.JsonProperty;
+
 import java.time.DayOfWeek;
 import java.util.Set;
 
@@ -8,6 +10,7 @@ import java.util.Set;
  * to the database directly.
  */
 public class EmployeeDTO {
+    @JsonProperty(access = JsonProperty.Access.READ_ONLY)
     private long id;
     private String name;
     private Set<EmployeeSkill> skills;

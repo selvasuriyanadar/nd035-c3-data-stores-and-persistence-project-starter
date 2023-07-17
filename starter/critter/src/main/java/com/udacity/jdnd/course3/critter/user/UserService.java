@@ -3,6 +3,7 @@ package com.udacity.jdnd.course3.critter.user;
 import com.udacity.jdnd.course3.critter.pet.PetModel;
 import com.udacity.jdnd.course3.critter.pet.PetRepository;
 
+import jakarta.validation.Valid;
 import com.udacity.jdnd.course3.critter.util.BeanUtil;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.transaction.annotation.Transactional;
@@ -29,39 +30,13 @@ public class UserService {
     private EntityManager entityManager;
 
     @Transactional
-    public CustomerModel saveCustomer(CustomerModel customerModel) {
-        if (customerModel.getName() == null || customerModel.getPhoneNumber() == null) {
-            throw new IllegalArgumentException("Name, Phone Number are all required.");
-        }
-        if (customerModel.getPets() != null) {
-            customerModel.setPets(customerModel.getPets().stream().distinct().map(pet -> {
-                if (!petRepository.existsById(pet.getId())) {
-                    throw new IllegalArgumentException("Pet Not Found.");
-                }
-                return entityManager.getReference(PetModel.class, pet.getId());
-            }).toList());
-        }
+    public CustomerModel saveCustomer(@Valid CustomerModel customerModel) {
         return customerRepository.save(customerModel);
     }
 
     @Transactional
-    public EmployeeModel saveEmployee(EmployeeModel employeeModel) {
-        if (employeeModel.getName() == null) {
-            throw new IllegalArgumentException("Name is required.");
-        }
-        if (employeeModel.getSkills() == null || employeeModel.getSkills().isEmpty()) {
-            throw new IllegalArgumentException("Skills are required.");
-        }
-        if (employeeModel.getDaysAvailable() == null || employeeModel.getDaysAvailable().isEmpty()) {
-            throw new IllegalArgumentException("Days Available are required.");
-        }
+    public EmployeeModel saveEmployee(@Valid EmployeeModel employeeModel) {
         return employeeRepository.save(employeeModel);
-    }
-
-    @Transactional
-    public void setAvailability(Set<DayOfWeek> daysAvailable, EmployeeModel model) {
-        model.setDaysAvailable(daysAvailable);
-        saveEmployee(model);
     }
 
 }

@@ -32,18 +32,6 @@ public class ScheduleService {
 
     @Transactional
     public ScheduleModel createSchedule(ScheduleModel scheduleModel) {
-        if (scheduleModel.getEmployees() == null || scheduleModel.getEmployees().isEmpty()) {
-            throw new IllegalArgumentException("Employees in a schedule shall not be empty.");
-        }
-        if (scheduleModel.getPets() == null || scheduleModel.getPets().isEmpty()) {
-            throw new IllegalArgumentException("Pets in a schedule shall not be empty.");
-        }
-        if (scheduleModel.getDate() == null) {
-            throw new IllegalArgumentException("Scheduled Date is required.");
-        }
-        if (scheduleModel.getActivities() == null || scheduleModel.getActivities().isEmpty()) {
-            throw new IllegalArgumentException("Activities the Employees are expected to carry out are required.");
-        }
         scheduleModel.setEmployees(scheduleModel.getEmployees().stream().filter(BeanUtil.distinctByKey(EmployeeModel::getId)).map(employee -> {
             if (!employeeRepository.existsById(employee.getId())) {
                 throw new IllegalArgumentException("Employee Not Found.");
