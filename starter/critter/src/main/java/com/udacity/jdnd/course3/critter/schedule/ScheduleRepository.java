@@ -20,4 +20,13 @@ public interface ScheduleRepository extends JpaRepository<ScheduleModel, Long> {
     @Query("select a from ScheduleModel a where a.id in (select distinct a.id from ScheduleModel a join a.pets p join p.owner o where o.id = ?1)")
     public List<ScheduleModel> fetchByCustomerId(long customerId);
 
+    @Query("select case when exists(select distinct a.id from ScheduleModel a join a.pets p where p.id = ?1) then true else false end")
+    public boolean existsByPetId(long petId);
+
+    @Query("select case when exists(select distinct a.id from ScheduleModel a join a.employees e where e.id = ?1) then true else false end")
+    public boolean existsByEmployeeId(long employeeId);
+
+    @Query("select case when exists(select distinct a.id from ScheduleModel a join a.pets p join p.owner o where o.id = ?1) then true else false end")
+    public boolean existsByCustomerId(long customerId);
+
 }

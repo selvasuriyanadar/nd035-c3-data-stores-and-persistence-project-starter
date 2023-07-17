@@ -6,9 +6,9 @@ import com.udacity.jdnd.course3.critter.pet.PetModel;
 import com.udacity.jdnd.course3.critter.util.BeanUtil;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.beans.factory.annotation.Autowired;
-import jakarta.persistence.EntityManager;
 
 import java.util.List;
+import java.util.stream.Collectors;
 
 /**
  * Handles web requests related to Schedules.
@@ -23,17 +23,22 @@ public class ScheduleController {
     @Autowired
     private ScheduleRepository scheduleRepository;
 
-    @Autowired
-    private EntityManager entityManager;
-
     @PostMapping
     public ScheduleDTO createSchedule(@RequestBody ScheduleDTO scheduleDTO) {
-        ScheduleModel model = BeanUtil.transfer(scheduleDTO, new ScheduleModel());
+        ScheduleModel model = BeanUtil.transferWithIgnoreFields(scheduleDTO, new ScheduleModel(), "id");
         if (scheduleDTO.getEmployeeIds() != null) {
-            model.setEmployees(scheduleDTO.getEmployeeIds().stream().distinct().map(employeeId -> entityManager.getReference(EmployeeModel.class, employeeId)).toList());
+            model.setEmployees(scheduleDTO.getEmployeeIds().stream().distinct().filter(employeeId -> (employeeId != null)).map(employeeId -> {
+                EmployeeModel employeeModel = new EmployeeModel();
+                employeeModel.setId(employeeId);
+                return employeeModel;
+            }).toList());
         }
         if (scheduleDTO.getPetIds() != null) {
-            model.setPets(scheduleDTO.getPetIds().stream().distinct().map(petId -> entityManager.getReference(PetModel.class, petId)).toList());
+            model.setPets(scheduleDTO.getPetIds().stream().distinct().filter(petId -> (petId != null)).map(petId -> {
+                PetModel petModel = new PetModel();
+                petModel.setId(petId);
+                return petModel;
+            }).toList());
         }
         ScheduleDTO scheduleDTOResponse = BeanUtil.transfer(scheduleService.createSchedule(model), new ScheduleDTO());
         if (model.getEmployees() != null) {

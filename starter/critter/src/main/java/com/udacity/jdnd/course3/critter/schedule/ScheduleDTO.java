@@ -1,6 +1,7 @@
 package com.udacity.jdnd.course3.critter.schedule;
 
 import com.udacity.jdnd.course3.critter.user.EmployeeSkill;
+import com.fasterxml.jackson.annotation.JsonProperty;
 
 import java.time.LocalDate;
 import java.util.List;
@@ -11,6 +12,7 @@ import java.util.Set;
  * to the database directly.
  */
 public class ScheduleDTO {
+    @JsonProperty(access = JsonProperty.Access.READ_ONLY)
     private long id;
     private List<Long> employeeIds;
     private List<Long> petIds;

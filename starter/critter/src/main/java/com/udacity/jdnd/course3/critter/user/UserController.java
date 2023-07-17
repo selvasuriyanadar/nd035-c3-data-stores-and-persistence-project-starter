@@ -1,12 +1,10 @@
 package com.udacity.jdnd.course3.critter.user;
 
 import com.udacity.jdnd.course3.critter.pet.PetModel;
-import com.udacity.jdnd.course3.critter.pet.PetRepository;
 
 import com.udacity.jdnd.course3.critter.util.BeanUtil;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.beans.factory.annotation.Autowired;
-import jakarta.persistence.EntityManager;
 
 import java.time.DayOfWeek;
 import java.util.*;
@@ -25,26 +23,19 @@ public class UserController {
     private UserService userService;
 
     @Autowired
-    private EntityManager entityManager;
-
-    @Autowired
     private CustomerRepository customerRepository;
 
     @Autowired
     private EmployeeRepository employeeRepository;
 
-    @Autowired
-    private PetRepository petRepository;
-
     @PostMapping("/customer")
     public CustomerDTO saveCustomer(@RequestBody CustomerDTO customerDTO){
         CustomerModel model = BeanUtil.transfer(customerDTO, new CustomerModel());
         if (customerDTO.getPetIds() != null) {
-            model.setPets(customerDTO.getPetIds().stream().distinct().map(petId -> {
-                if (!petRepository.existsById(petId)) {
-                    throw new IllegalArgumentException("Pet Not Found.");
-                }
-                return entityManager.getReference(PetModel.class, petId);
+            model.setPets(customerDTO.getPetIds().stream().distinct().filter(petId -> (petId != null)).map(petId -> {
+                PetModel petModel = new PetModel();
+                petModel.setId(petId);
+                return petModel;
             }).toList());
         }
         CustomerDTO customerDTOResponse = BeanUtil.transfer(userService.saveCustomer(model), new CustomerDTO());
@@ -72,22 +63,15 @@ public class UserController {
             throw new IllegalArgumentException("Could not find the owner of the pet.");
         }
         CustomerDTO customerDTOResponse = BeanUtil.transfer(modelOpt.get(), new CustomerDTO());
-        customerDTOResponse.setPetIds(modelOpt.get().getPets().stream().map(pet -> pet.getId()).toList());
+        if (modelOpt.get().getPets() != null) {
+            customerDTOResponse.setPetIds(modelOpt.get().getPets().stream().map(pet -> pet.getId()).toList());
+        }
         return customerDTOResponse;
     }
 
     @PostMapping("/employee")
     public EmployeeDTO saveEmployee(@RequestBody EmployeeDTO employeeDTO) {
         return BeanUtil.transfer(userService.saveEmployee(BeanUtil.transfer(employeeDTO, new EmployeeModel())), new EmployeeDTO());
-    }
-
-    @PostMapping("/employee/{employeeId}")
-    public EmployeeDTO getEmployee(@PathVariable long employeeId) {
-        Optional<EmployeeModel> modelOpt = employeeRepository.findById(employeeId);
-        if (modelOpt.isEmpty()) {
-            throw new IllegalArgumentException("Could not find Employee.");
-        }
-        return BeanUtil.transfer(modelOpt.get(), new EmployeeDTO());
     }
 
     @PutMapping("/employee/{employeeId}")
@@ -97,6 +81,15 @@ public class UserController {
             throw new IllegalArgumentException("Could not find Employee.");
         }
         userService.setAvailability(daysAvailable, modelOpt.get());
+    }
+
+    @GetMapping("/employee/{employeeId}")
+    public EmployeeDTO getEmployee(@PathVariable long employeeId) {
+        Optional<EmployeeModel> modelOpt = employeeRepository.findById(employeeId);
+        if (modelOpt.isEmpty()) {
+            throw new IllegalArgumentException("Could not find Employee.");
+        }
+        return BeanUtil.transfer(modelOpt.get(), new EmployeeDTO());
     }
 
     @GetMapping("/employee/availability")

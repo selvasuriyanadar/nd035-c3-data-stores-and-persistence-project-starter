@@ -1,5 +1,7 @@
 package com.udacity.jdnd.course3.critter.pet;
 
+import com.fasterxml.jackson.annotation.JsonProperty;
+
 import java.time.LocalDate;
 
 /**
@@ -7,6 +9,7 @@ import java.time.LocalDate;
  * to the database directly.
  */
 public class PetDTO {
+    @JsonProperty(access = JsonProperty.Access.READ_ONLY)
     private long id;
     private PetType type;
     private String name;
