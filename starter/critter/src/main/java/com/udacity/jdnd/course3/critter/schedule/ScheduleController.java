@@ -23,96 +23,40 @@ public class ScheduleController {
     @Autowired
     private ScheduleRepository scheduleRepository;
 
+    private ScheduleModel complete(ScheduleModel scheduleModel) {
+        scheduleModel.setEmployeeIds(scheduleRepository.fetchEmployeeIdByScheduleId(scheduleModel.getId()));
+        scheduleModel.setPetIds(scheduleRepository.fetchPetIdByScheduleId(scheduleModel.getId()));
+        return scheduleModel;
+    }
+
     @PostMapping
-    public ScheduleDTO createSchedule(@RequestBody ScheduleDTO scheduleDTO) {
-        ScheduleModel model = BeanUtil.transferWithIgnoreFields(scheduleDTO, new ScheduleModel(), "id");
-        if (scheduleDTO.getEmployeeIds() != null) {
-            model.setEmployees(scheduleDTO.getEmployeeIds().stream().distinct().filter(employeeId -> (employeeId != null)).map(employeeId -> {
-                EmployeeModel employeeModel = new EmployeeModel();
-                employeeModel.setId(employeeId);
-                return employeeModel;
-            }).toList());
-        }
-        if (scheduleDTO.getPetIds() != null) {
-            model.setPets(scheduleDTO.getPetIds().stream().distinct().filter(petId -> (petId != null)).map(petId -> {
-                PetModel petModel = new PetModel();
-                petModel.setId(petId);
-                return petModel;
-            }).toList());
-        }
-        ScheduleDTO scheduleDTOResponse = BeanUtil.transfer(scheduleService.createSchedule(model), new ScheduleDTO());
-        if (model.getEmployees() != null) {
-            scheduleDTOResponse.setEmployeeIds(model.getEmployees().stream().map(employee -> employee.getId()).toList());
-        }
-        if (model.getPets() != null) {
-            scheduleDTOResponse.setPetIds(model.getPets().stream().map(pet -> pet.getId()).toList());
-        }
-        return scheduleDTOResponse;
+    public ScheduleModel createSchedule(@RequestBody ScheduleModel scheduleModel) {
+        return complete(scheduleService.createSchedule(scheduleModel));
     }
 
     @GetMapping
-    public List<ScheduleDTO> getAllSchedules() {
-        return scheduleRepository.findAll().stream().map(model -> {
-            ScheduleDTO scheduleDTOResponse = BeanUtil.transfer(model, new ScheduleDTO());
-            if (model.getEmployees() != null) {
-                scheduleDTOResponse.setEmployeeIds(model.getEmployees().stream().map(employee -> employee.getId()).toList());
-            }
-            if (model.getPets() != null) {
-                scheduleDTOResponse.setPetIds(model.getPets().stream().map(pet -> pet.getId()).toList());
-            }
-            return scheduleDTOResponse;
-        }).toList();
+    public List<ScheduleModel> getAllSchedules() {
+        return scheduleRepository.findAll().stream().map(scheduleModel -> complete(scheduleModel)).toList();
     }
 
     @GetMapping("/pet/{petId}")
-    public List<ScheduleDTO> getScheduleForPet(@PathVariable long petId) {
-        return scheduleRepository.fetchByPetId(petId).stream().map(model -> {
-            ScheduleDTO scheduleDTOResponse = BeanUtil.transfer(model, new ScheduleDTO());
-            if (model.getEmployees() != null) {
-                scheduleDTOResponse.setEmployeeIds(model.getEmployees().stream().map(employee -> employee.getId()).toList());
-            }
-            if (model.getPets() != null) {
-                scheduleDTOResponse.setPetIds(model.getPets().stream().map(pet -> pet.getId()).toList());
-            }
-            return scheduleDTOResponse;
-        }).toList();
+    public List<ScheduleModel> getScheduleForPet(@PathVariable long petId) {
+        return scheduleRepository.fetchByPetId(petId).stream().map(scheduleModel -> complete(scheduleModel)).toList();
     }
 
     @GetMapping("/employee/{employeeId}")
-    public List<ScheduleDTO> getScheduleForEmployee(@PathVariable long employeeId) {
-        return scheduleRepository.fetchByEmployeeId(employeeId).stream().map(model -> {
-            ScheduleDTO scheduleDTOResponse = BeanUtil.transfer(model, new ScheduleDTO());
-            if (model.getEmployees() != null) {
-                scheduleDTOResponse.setEmployeeIds(model.getEmployees().stream().map(employee -> employee.getId()).toList());
-            }
-            if (model.getPets() != null) {
-                scheduleDTOResponse.setPetIds(model.getPets().stream().map(pet -> pet.getId()).toList());
-            }
-            return scheduleDTOResponse;
-        }).toList();
+    public List<ScheduleModel> getScheduleForEmployee(@PathVariable long employeeId) {
+        return scheduleRepository.fetchByEmployeeId(employeeId).stream().map(scheduleModel -> complete(scheduleModel)).toList();
     }
 
     @GetMapping("/customer/{customerId}")
-    public List<ScheduleDTO> getScheduleForCustomer(@PathVariable long customerId) {
-        return scheduleRepository.fetchByCustomerId(customerId).stream().map(model -> {
-            ScheduleDTO scheduleDTOResponse = BeanUtil.transfer(model, new ScheduleDTO());
-            if (model.getEmployees() != null) {
-                scheduleDTOResponse.setEmployeeIds(model.getEmployees().stream().map(employee -> employee.getId()).toList());
-            }
-            if (model.getPets() != null) {
-                scheduleDTOResponse.setPetIds(model.getPets().stream().map(pet -> pet.getId()).toList());
-            }
-            return scheduleDTOResponse;
-        }).toList();
+    public List<ScheduleModel> getScheduleForCustomer(@PathVariable long customerId) {
+        return scheduleRepository.fetchByCustomerId(customerId).stream().map(scheduleModel -> complete(scheduleModel)).toList();
     }
 
     @DeleteMapping("/{scheduleId}")
-    public void deleteSchedule(@PathVariable long scheduleId) {
-        Optional<ScheduleModel> modelOpt = scheduleRepository.findById(scheduleId);
-        if (modelOpt.isEmpty()) {
-            throw new IllegalArgumentException("Schedule Not Found.");
-        }
-        scheduleService.deleteSchedule(modelOpt.get());
+    public void deleteSchedule(@PathVariable("scheduleId") ScheduleModel scheduleModel) {
+        scheduleService.deleteSchedule(scheduleModel);
     }
 
 }

@@ -33,18 +33,6 @@ public class ScheduleService {
 
     @Transactional
     public ScheduleModel createSchedule(@Valid ScheduleModel scheduleModel) {
-        scheduleModel.setEmployees(scheduleModel.getEmployees().stream().filter(BeanUtil.distinctByKey(EmployeeModel::getId)).map(employee -> {
-            if (!employeeRepository.existsById(employee.getId())) {
-                throw new IllegalArgumentException("Employee Not Found.");
-            }
-            return entityManager.getReference(EmployeeModel.class, employee.getId());
-        }).toList());
-        scheduleModel.setPets(scheduleModel.getPets().stream().filter(BeanUtil.distinctByKey(PetModel::getId)).map(pet -> {
-            if (!petRepository.existsById(pet.getId())) {
-                throw new IllegalArgumentException("Pet Not Found.");
-            }
-            return entityManager.getReference(PetModel.class, pet.getId());
-        }).toList());
         return scheduleRepository.save(scheduleModel);
     }
 
