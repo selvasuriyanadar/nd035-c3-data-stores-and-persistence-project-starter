@@ -11,10 +11,16 @@ import jakarta.validation.constraints.NotNull;
 import jakarta.validation.constraints.NotEmpty;
 import jakarta.validation.constraints.Pattern;
 import jakarta.persistence.*;
+import lombok.Data;
+import lombok.NoArgsConstructor;
+import lombok.EqualsAndHashCode;
 
 import java.util.List;
 import java.util.Set;
 
+@Data
+@EqualsAndHashCode(callSuper = true, onlyExplicitlyIncluded = true)
+@NoArgsConstructor
 @Entity
 public class CustomerModel extends UserModel {
 
@@ -36,7 +42,7 @@ public class CustomerModel extends UserModel {
     @Transient
     private Set<Long> petIds;
 
-    @Override
+    /*@Override
     public boolean equals(Object obj) {
         return BeanUtil.checkEqualsById(this, obj, CustomerModel::getId);
     }
@@ -72,6 +78,6 @@ public class CustomerModel extends UserModel {
 
     public void setPetIds(Set<Long> petIds) {
         this.petIds = petIds;
-    }
+    }*/
 
 }

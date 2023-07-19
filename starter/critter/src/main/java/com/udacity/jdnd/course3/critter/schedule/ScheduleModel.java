@@ -11,14 +11,21 @@ import jakarta.validation.constraints.NotEmpty;
 import jakarta.validation.constraints.NotNull;
 import org.hibernate.annotations.GenericGenerator;
 import jakarta.persistence.*;
+import lombok.Data;
+import lombok.NoArgsConstructor;
+import lombok.EqualsAndHashCode;
 
 import java.time.LocalDate;
 import java.util.List;
 import java.util.Set;
 
+@Data
+@NoArgsConstructor
+@EqualsAndHashCode(onlyExplicitlyIncluded = true)
 @Entity
 public class ScheduleModel {
 
+    @EqualsAndHashCode.Include
     @JsonView(ScheduleViews.Public.class)
     @JsonProperty(access = JsonProperty.Access.READ_ONLY)
     @Id
@@ -55,51 +62,4 @@ public class ScheduleModel {
     @Enumerated(EnumType.STRING)
     private Set<@NotNull EmployeeSkill> activities;
 
-    public long getId(){
-        return id;
-    }
-
-    public void setId(long id){
-        this.id = id;
-    }
-
-    public Set<EmployeeModel> getEmployees() {
-        return employees;
-    }
-
-    public void setEmployees(Set<EmployeeModel> employees) {
-        this.employees = employees;
-    }
-
-    public void setEmployeeIds(Set<Long> employeeIds) {
-        this.employeeIds = employeeIds;
-    }
-
-    public Set<PetModel> getPets() {
-        return pets;
-    }
-
-    public void setPets(Set<PetModel> pets) {
-        this.pets = pets;
-    }
-
-    public void setPetIds(Set<Long> petIds) {
-        this.petIds = petIds;
-    }
-
-    public LocalDate getDate() {
-        return date;
-    }
-
-    public void setDate(LocalDate date) {
-        this.date = date;
-    }
-
-    public Set<EmployeeSkill> getActivities() {
-        return activities;
-    }
-
-    public void setActivities(Set<EmployeeSkill> activities) {
-        this.activities = activities;
-    }
 }

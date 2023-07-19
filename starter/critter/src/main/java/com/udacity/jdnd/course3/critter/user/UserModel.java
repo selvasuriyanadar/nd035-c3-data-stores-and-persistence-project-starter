@@ -8,6 +8,9 @@ import org.hibernate.annotations.Nationalized;
 import jakarta.validation.constraints.NotNull;
 import jakarta.validation.constraints.NotEmpty;
 import jakarta.persistence.*;
+import lombok.Data;
+import lombok.NoArgsConstructor;
+import lombok.EqualsAndHashCode;
 
 import java.util.List;
 
@@ -16,9 +19,13 @@ import java.util.List;
  * This creates separate table for each sub classes,
  * with the super class fields also present in each of those tables.
  */
+@Data
+@NoArgsConstructor
+@EqualsAndHashCode(onlyExplicitlyIncluded = true)
 @MappedSuperclass
 public abstract class UserModel {
 
+    @EqualsAndHashCode.Include
     @JsonView({EmployeeViews.Public.class, CustomerViews.Public.class})
     @JsonProperty(access = JsonProperty.Access.READ_ONLY)
     @Id
@@ -29,21 +36,5 @@ public abstract class UserModel {
     @NotEmpty(message = "Name is required.")
     @Nationalized
     private String name;
-
-    public long getId() {
-        return id;
-    }
-
-    public void setId(long id) {
-        this.id = id;
-    }
-
-    public String getName() {
-        return name;
-    }
-
-    public void setName(String name) {
-        this.name = name;
-    }
 
 }

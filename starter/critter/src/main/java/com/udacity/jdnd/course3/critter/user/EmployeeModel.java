@@ -6,10 +6,16 @@ import jakarta.validation.constraints.NotEmpty;
 import jakarta.validation.constraints.NotNull;
 import com.fasterxml.jackson.annotation.JsonView;
 import jakarta.persistence.*;
+import lombok.Data;
+import lombok.NoArgsConstructor;
+import lombok.EqualsAndHashCode;
 
 import java.time.DayOfWeek;
 import java.util.Set;
 
+@Data
+@EqualsAndHashCode(callSuper = true, onlyExplicitlyIncluded = true)
+@NoArgsConstructor
 @Entity
 public class EmployeeModel extends UserModel {
 
@@ -24,31 +30,5 @@ public class EmployeeModel extends UserModel {
     @ElementCollection
     @Enumerated(EnumType.STRING)
     private Set<@NotNull DayOfWeek> daysAvailable;
-
-    @Override
-    public boolean equals(Object obj) {
-        return BeanUtil.checkEqualsById(this, obj, EmployeeModel::getId);
-    }
-
-    @Override
-    public int hashCode() {
-        return BeanUtil.hashById(getId());
-    }
-
-    public Set<EmployeeSkill> getSkills() {
-        return skills;
-    }
-
-    public void setSkills(Set<EmployeeSkill> skills) {
-        this.skills = skills;
-    }
-
-    public Set<DayOfWeek> getDaysAvailable() {
-        return daysAvailable;
-    }
-
-    public void setDaysAvailable(Set<DayOfWeek> daysAvailable) {
-        this.daysAvailable = daysAvailable;
-    }
 
 }

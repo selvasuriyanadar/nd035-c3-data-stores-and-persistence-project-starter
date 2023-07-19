@@ -23,41 +23,15 @@ import java.util.*;
 @NoArgsConstructor
 @EqualsAndHashCode(onlyExplicitlyIncluded = true)
 @Entity
-public class PetModel {
+public class PetTypeModel {
 
     @EqualsAndHashCode.Include
-    @JsonView(PetViews.Public.class)
-    @JsonProperty(access = JsonProperty.Access.READ_ONLY)
-    @Id
-    @GeneratedValue(strategy = GenerationType.AUTO)
-    private long id;
-
-    @JsonView(PetViews.Public.class)
     @NotNull(message = "Type is required.")
     @Enumerated(EnumType.STRING)
+    @Id
     private PetType type;
 
-    @JsonView(PetViews.Public.class)
-    @NotEmpty(message = "Name is required.")
-    @Nationalized
-    private String name;
-
-    @JsonProperty(value = "ownerId", access = JsonProperty.Access.WRITE_ONLY)
-    @NotNull(message = "Owner is required.")
-    @ManyToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name = "owner_id", referencedColumnName = "id")
-    private CustomerModel owner;
-
-    @JsonView(PetViews.Public.class)
-    @JsonProperty(access = JsonProperty.Access.READ_ONLY)
-    @Transient
-    private long ownerId;
-
-    @JsonView(PetViews.Public.class)
-    private LocalDate birthDate;
-
-    @JsonView(PetViews.Public.class)
-    @Column(length = 1000)
-    private String notes;
+    @NotEmpty(message = "Relevent Activities are required.")
+    private Set<@NotNull EmployeeSkill> releventActivities;
 
 }
