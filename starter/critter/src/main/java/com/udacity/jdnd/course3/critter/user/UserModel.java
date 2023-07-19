@@ -5,6 +5,7 @@ import com.fasterxml.jackson.annotation.JsonIgnore;
 import org.hibernate.annotations.GenericGenerator;
 import org.hibernate.annotations.Nationalized;
 import jakarta.validation.constraints.NotNull;
+import jakarta.validation.constraints.NotEmpty;
 import jakarta.persistence.*;
 
 import java.util.List;
@@ -22,7 +23,7 @@ public abstract class UserModel {
     @GeneratedValue(strategy = GenerationType.AUTO)
     private long id;
 
-    @NotNull(message = "Name is required.")
+    @NotEmpty(message = "Name is required.")
     @Nationalized
     private String name;
 

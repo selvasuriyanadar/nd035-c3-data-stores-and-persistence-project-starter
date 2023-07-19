@@ -2,18 +2,23 @@ package com.udacity.jdnd.course3.critter.user;
 
 import com.udacity.jdnd.course3.critter.pet.PetModel;
 
+import com.udacity.jdnd.course3.critter.util.BeanUtil;
 import com.fasterxml.jackson.annotation.JsonProperty;
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import org.hibernate.annotations.GenericGenerator;
 import jakarta.validation.constraints.NotNull;
+import jakarta.validation.constraints.NotEmpty;
+import jakarta.validation.constraints.Pattern;
 import jakarta.persistence.*;
 
 import java.util.List;
+import java.util.Set;
 
 @Entity
 public class CustomerModel extends UserModel {
 
-    @NotNull(message = "Phone Number is required.")
+    @Pattern(regexp = "^(\\+\\d{1,3}( )?)?((\\(\\d{3}\\))|\\d{3})[- .]?\\d{3}[- .]?\\d{4}$", message = "Invalid Phone Number.")
+    @NotEmpty(message = "Phone Number is required.")
     private String phoneNumber;
 
     @Column(length = 1000)
@@ -21,11 +26,21 @@ public class CustomerModel extends UserModel {
 
     @JsonProperty(value = "petIds", access = JsonProperty.Access.WRITE_ONLY)
     @OneToMany(mappedBy = "owner", cascade = CascadeType.REMOVE)
-    private List<@NotNull PetModel> pets;
+    private Set<@NotNull PetModel> pets;
 
     @JsonProperty(access = JsonProperty.Access.READ_ONLY)
     @Transient
-    private List<Long> petIds;
+    private Set<Long> petIds;
+
+    @Override
+    public boolean equals(Object obj) {
+        return BeanUtil.checkEqualsById(this, obj, CustomerModel::getId);
+    }
+
+    @Override
+    public int hashCode() {
+        return BeanUtil.hashById(getId());
+    }
 
     public String getPhoneNumber() {
         return phoneNumber;
@@ -43,15 +58,15 @@ public class CustomerModel extends UserModel {
         this.notes = notes;
     }
 
-    public List<PetModel> getPets() {
+    public Set<PetModel> getPets() {
         return pets;
     }
 
-    public void setPets(List<PetModel> pets) {
+    public void setPets(Set<PetModel> pets) {
         this.pets = pets;
     }
 
-    public void setPetIds(List<Long> petIds) {
+    public void setPetIds(Set<Long> petIds) {
         this.petIds = petIds;
     }
 

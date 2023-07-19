@@ -15,6 +15,6 @@ public interface CustomerRepository extends JpaRepository<CustomerModel, Long> {
     public Optional<CustomerModel> fetchByPetId(long petId);
 
     @Query("select p.id from CustomerModel a join a.pets p where a.id = ?1")
-    public List<Long> fetchPetIdByCustomerId(long customerId);
+    public Set<Long> fetchPetIdByCustomerId(long customerId);
 
 }

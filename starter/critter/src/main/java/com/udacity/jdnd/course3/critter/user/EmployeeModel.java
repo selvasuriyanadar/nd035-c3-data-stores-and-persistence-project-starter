@@ -1,5 +1,6 @@
 package com.udacity.jdnd.course3.critter.user;
 
+import com.udacity.jdnd.course3.critter.util.BeanUtil;
 import org.hibernate.annotations.GenericGenerator;
 import jakarta.validation.constraints.NotEmpty;
 import jakarta.validation.constraints.NotNull;
@@ -20,6 +21,16 @@ public class EmployeeModel extends UserModel {
     @ElementCollection
     @Enumerated(EnumType.STRING)
     private Set<@NotNull DayOfWeek> daysAvailable;
+
+    @Override
+    public boolean equals(Object obj) {
+        return BeanUtil.checkEqualsById(this, obj, EmployeeModel::getId);
+    }
+
+    @Override
+    public int hashCode() {
+        return BeanUtil.hashById(getId());
+    }
 
     public Set<EmployeeSkill> getSkills() {
         return skills;

@@ -2,9 +2,11 @@ package com.udacity.jdnd.course3.critter.pet;
 
 import com.udacity.jdnd.course3.critter.user.CustomerModel;
 
+import com.udacity.jdnd.course3.critter.util.BeanUtil;
 import com.fasterxml.jackson.annotation.JsonProperty;
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import jakarta.validation.constraints.NotNull;
+import jakarta.validation.constraints.NotEmpty;
 import org.hibernate.annotations.GenericGenerator;
 import org.hibernate.annotations.Nationalized;
 import jakarta.persistence.*;
@@ -23,7 +25,7 @@ public class PetModel {
     @Enumerated(EnumType.STRING)
     private PetType type;
 
-    @NotNull(message = "Name is required.")
+    @NotEmpty(message = "Name is required.")
     @Nationalized
     private String name;
 
@@ -41,6 +43,16 @@ public class PetModel {
 
     @Column(length = 1000)
     private String notes;
+
+    @Override
+    public boolean equals(Object obj) {
+        return BeanUtil.checkEqualsById(this, obj, PetModel::getId);
+    }
+
+    @Override
+    public int hashCode() {
+        return BeanUtil.hashById(getId());
+    }
 
     public PetType getType() {
         return type;

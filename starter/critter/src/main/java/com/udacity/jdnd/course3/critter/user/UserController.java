@@ -2,6 +2,7 @@ package com.udacity.jdnd.course3.critter.user;
 
 import com.udacity.jdnd.course3.critter.pet.PetModel;
 
+import jakarta.validation.Valid;
 import com.udacity.jdnd.course3.critter.util.BeanUtil;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -74,7 +75,7 @@ public class UserController {
     }
 
     @PostMapping("/employee/availability")
-    public List<EmployeeModel> findEmployeesForService(@RequestBody EmployeeRequestDTO employeeDTO) {
+    public List<EmployeeModel> findEmployeesForService(@RequestBody @Valid EmployeeRequestDTO employeeDTO) {
         return employeeRepository.fetchBySkillsAndAvailableDay(employeeDTO.getSkills(), employeeDTO.getDate().getDayOfWeek());
     }
 

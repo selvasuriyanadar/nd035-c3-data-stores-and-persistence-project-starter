@@ -26,20 +26,20 @@ public class ScheduleModel {
     @JsonProperty(value = "employeeIds", access = JsonProperty.Access.WRITE_ONLY)
     @NotEmpty(message = "Employees in a schedule shall not be empty.")
     @ManyToMany
-    private List<@NotNull EmployeeModel> employees;
+    private Set<@NotNull EmployeeModel> employees;
 
     @JsonProperty(access = JsonProperty.Access.READ_ONLY)
     @Transient
-    private List<Long> employeeIds;
+    private Set<Long> employeeIds;
 
     @JsonProperty(value = "petIds", access = JsonProperty.Access.WRITE_ONLY)
     @NotEmpty(message = "Pets in a schedule shall not be empty.")
     @ManyToMany
-    private List<@NotNull PetModel> pets;
+    private Set<@NotNull PetModel> pets;
 
     @JsonProperty(access = JsonProperty.Access.READ_ONLY)
     @Transient
-    private List<Long> petIds;
+    private Set<Long> petIds;
 
     @NotNull(message = "Scheduled Date is required.")
     private LocalDate date;
@@ -57,27 +57,27 @@ public class ScheduleModel {
         this.id = id;
     }
 
-    public List<EmployeeModel> getEmployees() {
+    public Set<EmployeeModel> getEmployees() {
         return employees;
     }
 
-    public void setEmployees(List<EmployeeModel> employees) {
+    public void setEmployees(Set<EmployeeModel> employees) {
         this.employees = employees;
     }
 
-    public void setEmployeeIds(List<Long> employeeIds) {
+    public void setEmployeeIds(Set<Long> employeeIds) {
         this.employeeIds = employeeIds;
     }
 
-    public List<PetModel> getPets() {
+    public Set<PetModel> getPets() {
         return pets;
     }
 
-    public void setPets(List<PetModel> pets) {
+    public void setPets(Set<PetModel> pets) {
         this.pets = pets;
     }
 
-    public void setPetIds(List<Long> petIds) {
+    public void setPetIds(Set<Long> petIds) {
         this.petIds = petIds;
     }
 

@@ -23,4 +23,25 @@ public class BeanUtil {
         return t -> seen.putIfAbsent(keyExtractor.apply(t), Boolean.TRUE) == null;
     }
 
+    public interface IdGetter<T> {
+        public long getId(T obj);
+    }
+
+    public static <T> boolean checkEqualsById(T thisObj, Object obj, IdGetter<T> idGetter) {
+        if (thisObj == null || obj == null || (obj.getClass() != thisObj.getClass())) {
+            return false;
+        }
+        if (idGetter.getId(thisObj) <= 0) {
+            return false;
+        }
+        if (idGetter.getId(thisObj) == idGetter.getId((T) obj)) {
+            return true;
+        }
+        return false;
+    }
+
+    public static int hashById(long id) {
+        return Objects.hash(id);
+    }
+
 }
