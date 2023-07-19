@@ -3,6 +3,9 @@ package com.udacity.jdnd.course3.critter;
 import com.udacity.jdnd.course3.critter.pet.LongToPetDeserializer;
 import com.udacity.jdnd.course3.critter.pet.PetModel;
 import com.udacity.jdnd.course3.critter.pet.PetRepository;
+import com.udacity.jdnd.course3.critter.pet.PetTypeToPetTypeModelDeserializer;
+import com.udacity.jdnd.course3.critter.pet.PetTypeModel;
+import com.udacity.jdnd.course3.critter.pet.PetTypeRepository;
 import com.udacity.jdnd.course3.critter.user.LongToCustomerDeserializer;
 import com.udacity.jdnd.course3.critter.user.CustomerModel;
 import com.udacity.jdnd.course3.critter.user.CustomerRepository;
@@ -40,6 +43,9 @@ public class CritterWebMvcConfiguration implements WebMvcConfigurer {
 
     @Autowired
     private PetRepository petRepository;
+
+    @Autowired
+    private PetTypeRepository petTypeRepository;
 
     @Autowired
     private ScheduleRepository scheduleRepository;
@@ -83,6 +89,21 @@ public class CritterWebMvcConfiguration implements WebMvcConfigurer {
             {
                 if (beanDesc.getBeanClass() == PetModel.class)
                     return new LongToPetDeserializer(entityManager, petRepository, deserializer);
+                return deserializer;
+            }
+        });
+        return module;
+    }
+
+    @Bean
+    public Module petTypeModule() {
+        SimpleModule module = new SimpleModule();
+        module.setDeserializerModifier(new BeanDeserializerModifier()
+        {
+            @Override public JsonDeserializer<?> modifyDeserializer(DeserializationConfig config, BeanDescription beanDesc, JsonDeserializer<?> deserializer)
+            {
+                if (beanDesc.getBeanClass() == PetTypeModel.class)
+                    return new PetTypeToPetTypeModelDeserializer(entityManager, petTypeRepository, deserializer);
                 return deserializer;
             }
         });

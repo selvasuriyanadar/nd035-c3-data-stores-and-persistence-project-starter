@@ -30,6 +30,9 @@ public class PetService {
     @Autowired
     private ScheduleRepository scheduleRepository;
 
+    @Autowired
+    private PetTypeRepository petTypeRepository;
+
     @Transactional
     public PetModel savePet(@Valid PetModel model) {
         return petRepository.save(model);
@@ -41,6 +44,11 @@ public class PetService {
             throw new IllegalStateException("The pet is scheduled for some activities.");
         }
         petRepository.delete(model);
+    }
+
+    @Transactional
+    public PetTypeModel configurePetType(@Valid PetTypeModel model) {
+        return petTypeRepository.save(model);
     }
 
 }

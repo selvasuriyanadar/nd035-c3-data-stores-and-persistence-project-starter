@@ -22,8 +22,13 @@ public class PetController {
     @Autowired
     private PetRepository petRepository;
 
+    @Autowired
+    private PetTypeRepository petTypeRepository;
+
     private PetModel complete(PetModel petModel) {
         petModel.setOwnerId(petRepository.fetchOwnerIdByPetId(petModel.getId()));
+        petModel.setReleventActivities(petModel.getType().getReleventActivities());
+        petModel.setTypeEnum(petModel.getType().getType());
         return petModel;
     }
 
@@ -54,5 +59,20 @@ public class PetController {
     @DeleteMapping("/{petId}")
     public void deletePet(@PathVariable("petId") PetModel petModel) {
         petService.deletePet(petModel);
+    }
+
+    @PostMapping("/petType")
+    public PetTypeModel configurePetType(@RequestBody PetTypeModel petTypeModel) {
+        return petService.configurePetType(petTypeModel);
+    }
+
+    @GetMapping("/petType")
+    public List<PetTypeModel> getAllPetTypeConfigs() {
+        return petTypeRepository.findAll();
+    }
+
+    @GetMapping("/petType/{petType}")
+    public PetTypeModel getAllPetTypeConfigs(@PathVariable("petType") PetTypeModel petTypeModel) {
+        return petTypeModel;
     }
 }

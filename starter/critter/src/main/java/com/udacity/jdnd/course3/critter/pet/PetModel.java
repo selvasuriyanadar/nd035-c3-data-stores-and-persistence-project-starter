@@ -32,10 +32,20 @@ public class PetModel {
     @GeneratedValue(strategy = GenerationType.AUTO)
     private long id;
 
-    @JsonView(PetViews.Public.class)
+    @JsonProperty(access = JsonProperty.Access.WRITE_ONLY)
     @NotNull(message = "Type is required.")
-    @Enumerated(EnumType.STRING)
-    private PetType type;
+    @ManyToOne
+    private PetTypeModel type;
+
+    @JsonView(PetViews.Public.class)
+    @JsonProperty(value = "type", access = JsonProperty.Access.READ_ONLY)
+    @Transient
+    private PetType typeEnum;
+
+    @JsonView(PetViews.Public.class)
+    @JsonProperty(access = JsonProperty.Access.READ_ONLY)
+    @Transient
+    private Set<EmployeeSkill> releventActivities;
 
     @JsonView(PetViews.Public.class)
     @NotEmpty(message = "Name is required.")

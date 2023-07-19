@@ -34,4 +34,9 @@ public class PetTypeModel {
     @NotEmpty(message = "Relevent Activities are required.")
     private Set<@NotNull EmployeeSkill> releventActivities;
 
+    public PetTypeModel(PetType type) {
+        this.type = type;
+        this.releventActivities = type.getReleventActivities();
+    }
+
 }
