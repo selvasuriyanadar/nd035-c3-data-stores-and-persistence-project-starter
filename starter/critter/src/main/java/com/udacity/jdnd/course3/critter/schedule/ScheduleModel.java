@@ -6,6 +6,7 @@ import com.udacity.jdnd.course3.critter.pet.PetModel;
 
 import com.fasterxml.jackson.annotation.JsonProperty;
 import com.fasterxml.jackson.annotation.JsonIgnore;
+import com.fasterxml.jackson.annotation.JsonView;
 import jakarta.validation.constraints.NotEmpty;
 import jakarta.validation.constraints.NotNull;
 import org.hibernate.annotations.GenericGenerator;
@@ -18,6 +19,7 @@ import java.util.Set;
 @Entity
 public class ScheduleModel {
 
+    @JsonView(ScheduleViews.Public.class)
     @JsonProperty(access = JsonProperty.Access.READ_ONLY)
     @Id
     @GeneratedValue(strategy = GenerationType.AUTO)
@@ -28,6 +30,7 @@ public class ScheduleModel {
     @ManyToMany
     private Set<@NotNull EmployeeModel> employees;
 
+    @JsonView(ScheduleViews.Public.class)
     @JsonProperty(access = JsonProperty.Access.READ_ONLY)
     @Transient
     private Set<Long> employeeIds;
@@ -37,13 +40,16 @@ public class ScheduleModel {
     @ManyToMany
     private Set<@NotNull PetModel> pets;
 
+    @JsonView(ScheduleViews.Public.class)
     @JsonProperty(access = JsonProperty.Access.READ_ONLY)
     @Transient
     private Set<Long> petIds;
 
+    @JsonView(ScheduleViews.Public.class)
     @NotNull(message = "Scheduled Date is required.")
     private LocalDate date;
 
+    @JsonView(ScheduleViews.Public.class)
     @NotEmpty(message = "Activities the Employees are expected to carry out are required.")
     @ElementCollection
     @Enumerated(EnumType.STRING)
