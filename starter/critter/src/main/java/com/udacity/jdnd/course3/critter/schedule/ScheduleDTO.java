@@ -12,7 +12,6 @@ import java.util.Set;
  * to the database directly.
  */
 public class ScheduleDTO {
-    @JsonProperty(access = JsonProperty.Access.READ_ONLY)
     private long id;
     private List<Long> employeeIds;
     private List<Long> petIds;

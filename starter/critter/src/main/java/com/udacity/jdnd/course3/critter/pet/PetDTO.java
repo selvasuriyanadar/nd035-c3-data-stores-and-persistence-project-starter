@@ -9,7 +9,6 @@ import java.time.LocalDate;
  * to the database directly.
  */
 public class PetDTO {
-    @JsonProperty(access = JsonProperty.Access.READ_ONLY)
     private long id;
     private PetType type;
     private String name;

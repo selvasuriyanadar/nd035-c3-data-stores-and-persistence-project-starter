@@ -14,4 +14,7 @@ public interface PetRepository extends JpaRepository<PetModel, Long> {
     @Query("select a from PetModel a join a.owner o where o.id = ?1")
     public List<PetModel> fetchByOwnerId(long ownerId);
 
+    @Query("select o.id from PetModel a join a.owner o where a.id = ?1")
+    public long fetchOwnerIdByPetId(long petId);
+
 }

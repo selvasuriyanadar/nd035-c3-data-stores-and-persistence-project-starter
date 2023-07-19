@@ -1,10 +1,12 @@
 package com.udacity.jdnd.course3.critter;
 
 import com.udacity.jdnd.course3.critter.pet.PetController;
+import com.udacity.jdnd.course3.critter.pet.PetTestController;
 import com.udacity.jdnd.course3.critter.pet.PetDTO;
 import com.udacity.jdnd.course3.critter.pet.PetType;
 import com.udacity.jdnd.course3.critter.schedule.ScheduleController;
 import com.udacity.jdnd.course3.critter.schedule.ScheduleDTO;
+import com.udacity.jdnd.course3.critter.schedule.ScheduleTestController;
 import com.udacity.jdnd.course3.critter.user.*;
 
 import com.google.common.collect.Lists;
@@ -13,8 +15,12 @@ import org.hibernate.Session;
 import jakarta.persistence.EntityManager;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.BeforeEach;
+import org.springframework.test.annotation.DirtiesContext;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
+import org.springframework.boot.test.web.server.LocalServerPort;
+import org.springframework.boot.test.web.client.TestRestTemplate;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.time.DayOfWeek;
@@ -33,27 +39,36 @@ import java.util.stream.IntStream;
  * These tests should all pass once the project is complete.
  */
 @Transactional
-@SpringBootTest(classes = CritterApplication.class)
+@SpringBootTest(classes = CritterApplication.class, webEnvironment = SpringBootTest.WebEnvironment.RANDOM_PORT)
+@DirtiesContext(classMode = DirtiesContext.ClassMode.BEFORE_EACH_TEST_METHOD)
 public class CritterFunctionalTest {
+
+    @LocalServerPort
+    private int port;
 
     @Autowired
     private EntityManager entityManager;
 
-    @Autowired
-    private UserController userController;
+    private UserTestController userController;
+
+    private PetTestController petController;
+
+    private ScheduleTestController scheduleController;
 
     @Autowired
-    private PetController petController;
+    private TestRestTemplate testRestTemplate;
 
-    @Autowired
-    private ScheduleController scheduleController;
+    @BeforeEach
+    public void setup() {
+        this.userController = new UserTestController(port, testRestTemplate);
+        this.petController = new PetTestController(port, testRestTemplate);
+        this.scheduleController = new ScheduleTestController(port, testRestTemplate);
+    }
 
     @Test
     public void testCreateCustomer(){
         CustomerDTO customerDTO = createCustomerDTO();
         CustomerDTO newCustomer = userController.saveCustomer(customerDTO);
-
-        flushAndClearSession(entityManager);
 
         CustomerDTO retrievedCustomer = userController.getAllCustomers().get(0);
         Assertions.assertEquals(newCustomer.getName(), customerDTO.getName());
@@ -92,8 +107,6 @@ public class CritterFunctionalTest {
         Assertions.assertEquals(newPet.getId(), pets.get(0).getId());
         Assertions.assertEquals(newPet.getName(), pets.get(0).getName());
 
-        flushAndClearSession(entityManager);
-
         //check to make sure customer now also contains pet
         CustomerDTO retrievedCustomer = userController.getAllCustomers().get(0);
         Assertions.assertTrue(retrievedCustomer.getPetIds() != null && retrievedCustomer.getPetIds().size() > 0);
@@ -126,8 +139,6 @@ public class CritterFunctionalTest {
         PetDTO petDTO = createPetDTO();
         petDTO.setOwnerId(newCustomer.getId());
         PetDTO newPet = petController.savePet(petDTO);
-
-        flushAndClearSession(entityManager);
 
         CustomerDTO owner = userController.getOwnerByPet(newPet.getId());
         Assertions.assertEquals(owner.getId(), newCustomer.getId());
@@ -245,8 +256,6 @@ public class CritterFunctionalTest {
         List<ScheduleDTO> scheds2p = scheduleController.getScheduleForPet(sched2.getPetIds().get(0));
         compareSchedules(sched2, scheds2p.get(0));
         compareSchedules(sched3, scheds2p.get(1));
-
-        flushAndClearSession(entityManager);
 
         //Owner of the first pet will only be in schedule 1
         List<ScheduleDTO> scheds1c = scheduleController.getScheduleForCustomer(userController.getOwnerByPet(sched1.getPetIds().get(0)).getId());

@@ -4,6 +4,8 @@ import com.udacity.jdnd.course3.critter.user.EmployeeSkill;
 import com.udacity.jdnd.course3.critter.user.EmployeeModel;
 import com.udacity.jdnd.course3.critter.pet.PetModel;
 
+import com.fasterxml.jackson.annotation.JsonProperty;
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import jakarta.validation.constraints.NotEmpty;
 import jakarta.validation.constraints.NotNull;
 import org.hibernate.annotations.GenericGenerator;
@@ -16,17 +18,28 @@ import java.util.Set;
 @Entity
 public class ScheduleModel {
 
+    @JsonProperty(access = JsonProperty.Access.READ_ONLY)
     @Id
     @GeneratedValue(strategy = GenerationType.AUTO)
     private long id;
 
+    @JsonProperty(value = "employeeIds", access = JsonProperty.Access.WRITE_ONLY)
     @NotEmpty(message = "Employees in a schedule shall not be empty.")
     @ManyToMany
-    private List<EmployeeModel> employees;
+    private List<@NotNull EmployeeModel> employees;
 
+    @JsonProperty(access = JsonProperty.Access.READ_ONLY)
+    @Transient
+    private List<Long> employeeIds;
+
+    @JsonProperty(value = "petIds", access = JsonProperty.Access.WRITE_ONLY)
     @NotEmpty(message = "Pets in a schedule shall not be empty.")
     @ManyToMany
-    private List<PetModel> pets;
+    private List<@NotNull PetModel> pets;
+
+    @JsonProperty(access = JsonProperty.Access.READ_ONLY)
+    @Transient
+    private List<Long> petIds;
 
     @NotNull(message = "Scheduled Date is required.")
     private LocalDate date;
@@ -34,7 +47,7 @@ public class ScheduleModel {
     @NotEmpty(message = "Activities the Employees are expected to carry out are required.")
     @ElementCollection
     @Enumerated(EnumType.STRING)
-    private Set<EmployeeSkill> activities;
+    private Set<@NotNull EmployeeSkill> activities;
 
     public long getId(){
         return id;
@@ -52,12 +65,20 @@ public class ScheduleModel {
         this.employees = employees;
     }
 
+    public void setEmployeeIds(List<Long> employeeIds) {
+        this.employeeIds = employeeIds;
+    }
+
     public List<PetModel> getPets() {
         return pets;
     }
 
     public void setPets(List<PetModel> pets) {
         this.pets = pets;
+    }
+
+    public void setPetIds(List<Long> petIds) {
+        this.petIds = petIds;
     }
 
     public LocalDate getDate() {

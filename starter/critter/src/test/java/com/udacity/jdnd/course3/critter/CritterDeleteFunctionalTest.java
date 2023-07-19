@@ -1,9 +1,11 @@
 package com.udacity.jdnd.course3.critter;
 
 import com.udacity.jdnd.course3.critter.pet.PetController;
+import com.udacity.jdnd.course3.critter.pet.PetTestController;
 import com.udacity.jdnd.course3.critter.pet.PetDTO;
 import com.udacity.jdnd.course3.critter.pet.PetType;
 import com.udacity.jdnd.course3.critter.schedule.ScheduleController;
+import com.udacity.jdnd.course3.critter.schedule.ScheduleTestController;
 import com.udacity.jdnd.course3.critter.schedule.ScheduleDTO;
 import com.udacity.jdnd.course3.critter.user.*;
 
@@ -13,8 +15,12 @@ import org.hibernate.Session;
 import jakarta.persistence.EntityManager;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.BeforeEach;
+import org.springframework.test.annotation.DirtiesContext;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
+import org.springframework.boot.test.web.server.LocalServerPort;
+import org.springframework.boot.test.web.client.TestRestTemplate;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.time.DayOfWeek;
@@ -27,21 +33,31 @@ import java.util.stream.IntStream;
 /**
  * This is a set of functional requirements for delete functionality
  */
-@Transactional
-@SpringBootTest
+@SpringBootTest(webEnvironment = SpringBootTest.WebEnvironment.RANDOM_PORT)
+@DirtiesContext(classMode = DirtiesContext.ClassMode.BEFORE_EACH_TEST_METHOD)
 public class CritterDeleteFunctionalTest {
+
+    @LocalServerPort
+    private int port;
 
     @Autowired
     private EntityManager entityManager;
 
-    @Autowired
-    private PetController petController;
+    private PetTestController petController;
+
+    private UserTestController userController;
+
+    private ScheduleTestController scheduleController;
 
     @Autowired
-    private UserController userController;
+    private TestRestTemplate testRestTemplate;
 
-    @Autowired
-    private ScheduleController scheduleController;
+    @BeforeEach
+    public void setup() {
+        this.userController = new UserTestController(port, testRestTemplate);
+        this.petController = new PetTestController(port, testRestTemplate);
+        this.scheduleController = new ScheduleTestController(port, testRestTemplate);
+    }
 
     /**
      * A pet can only be deleted if no schedule for it exists in the present day or any other future days
@@ -76,8 +92,6 @@ public class CritterDeleteFunctionalTest {
         PetDTO petDTO2 = CritterFunctionalTest.createPetDTO();
         petDTO2.setOwnerId(newCustomer.getId());
         PetDTO newPet2 = petController.savePet(petDTO2);
-
-        CritterFunctionalTest.flushAndClearSession(entityManager);
 
         // check if the customer disappears
         userController.deleteCustomer(newCustomer.getId());

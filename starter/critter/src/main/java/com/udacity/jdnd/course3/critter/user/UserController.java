@@ -30,7 +30,7 @@ public class UserController {
 
     @PostMapping("/customer")
     public CustomerDTO saveCustomer(@RequestBody CustomerDTO customerDTO){
-        CustomerModel model = BeanUtil.transfer(customerDTO, new CustomerModel());
+        CustomerModel model = BeanUtil.transferWithIgnoreFields(customerDTO, new CustomerModel(), "id", "petIds");
         CustomerDTO customerDTOResponse = BeanUtil.transfer(userService.saveCustomer(model), new CustomerDTO());
         if (model.getPets() != null) {
             customerDTOResponse.setPetIds(model.getPets().stream().map(pet -> pet.getId()).toList());
@@ -53,7 +53,7 @@ public class UserController {
     public CustomerDTO getOwnerByPet(@PathVariable long petId){
         Optional<CustomerModel> modelOpt = customerRepository.fetchByPetId(petId);
         if (modelOpt.isEmpty()) {
-            throw new IllegalArgumentException("Could not find the owner of the pet.");
+            throw new IllegalStateException("Could not find the owner of the pet.");
         }
         CustomerDTO customerDTOResponse = BeanUtil.transfer(modelOpt.get(), new CustomerDTO());
         if (modelOpt.get().getPets() != null) {
@@ -73,7 +73,7 @@ public class UserController {
 
     @PostMapping("/employee")
     public EmployeeDTO saveEmployee(@RequestBody EmployeeDTO employeeDTO) {
-        return BeanUtil.transfer(userService.saveEmployee(BeanUtil.transfer(employeeDTO, new EmployeeModel())), new EmployeeDTO());
+        return BeanUtil.transfer(userService.saveEmployee(BeanUtil.transferWithIgnoreFields(employeeDTO, new EmployeeModel(), "id")), new EmployeeDTO());
     }
 
     @PutMapping("/employee/{employeeId}")
@@ -95,7 +95,7 @@ public class UserController {
         return BeanUtil.transfer(modelOpt.get(), new EmployeeDTO());
     }
 
-    @GetMapping("/employee/availability")
+    @PostMapping("/employee/availability")
     public List<EmployeeDTO> findEmployeesForService(@RequestBody EmployeeRequestDTO employeeDTO) {
         return employeeRepository.fetchBySkillsAndAvailableDay(employeeDTO.getSkills(), employeeDTO.getDate().getDayOfWeek()).stream().map(model -> BeanUtil.transfer(model, new EmployeeDTO())).toList();
     }

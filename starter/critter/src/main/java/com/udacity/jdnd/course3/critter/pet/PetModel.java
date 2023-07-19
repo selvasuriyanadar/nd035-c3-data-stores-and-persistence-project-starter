@@ -2,6 +2,8 @@ package com.udacity.jdnd.course3.critter.pet;
 
 import com.udacity.jdnd.course3.critter.user.CustomerModel;
 
+import com.fasterxml.jackson.annotation.JsonProperty;
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import jakarta.validation.constraints.NotNull;
 import org.hibernate.annotations.GenericGenerator;
 import org.hibernate.annotations.Nationalized;
@@ -12,6 +14,7 @@ import java.time.LocalDate;
 @Entity
 public class PetModel {
 
+    @JsonProperty(access = JsonProperty.Access.READ_ONLY)
     @Id
     @GeneratedValue(strategy = GenerationType.AUTO)
     private long id;
@@ -24,10 +27,15 @@ public class PetModel {
     @Nationalized
     private String name;
 
+    @JsonProperty(value = "ownerId", access = JsonProperty.Access.WRITE_ONLY)
     @NotNull(message = "Owner is required.")
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "owner_id", referencedColumnName = "id")
     private CustomerModel owner;
+
+    @JsonProperty(access = JsonProperty.Access.READ_ONLY)
+    @Transient
+    private long ownerId;
 
     private LocalDate birthDate;
 
@@ -56,6 +64,10 @@ public class PetModel {
 
     public void setOwner(CustomerModel owner) {
         this.owner = owner;
+    }
+
+    public void setOwnerId(long ownerId) {
+        this.ownerId = ownerId;
     }
 
     public LocalDate getBirthDate() {

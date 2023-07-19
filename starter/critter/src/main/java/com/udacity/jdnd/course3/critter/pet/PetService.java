@@ -32,10 +32,6 @@ public class PetService {
 
     @Transactional
     public PetModel savePet(@Valid PetModel model) {
-        if (!customerRepository.existsById(model.getOwner().getId())) {
-            throw new IllegalArgumentException("Customer Not Found.");
-        }
-        model.setOwner(entityManager.getReference(CustomerModel.class, model.getOwner().getId()));
         return petRepository.save(model);
     }
 
