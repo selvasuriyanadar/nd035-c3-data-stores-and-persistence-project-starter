@@ -37,6 +37,18 @@ public class ScheduleController {
     }
 
     @JsonView(ScheduleViews.Public.class)
+    @PutMapping("/{scheduleId}")
+    public ScheduleModel editSchedule(@PathVariable("scheduleId") ScheduleModel scheduleModel, @RequestBody ScheduleModel request) {
+        return complete(scheduleService.saveSchedule(BeanUtil.transferIfNotNull(request, scheduleModel)));
+    }
+
+    @JsonView(ScheduleViews.Public.class)
+    @GetMapping("/{scheduleId}")
+    public ScheduleModel getSchedule(@PathVariable("scheduleId") ScheduleModel scheduleModel) {
+        return complete(scheduleModel);
+    }
+
+    @JsonView(ScheduleViews.Public.class)
     @GetMapping
     public List<ScheduleModel> getAllSchedules() {
         return scheduleRepository.findAll().stream().map(scheduleModel -> complete(scheduleModel)).toList();

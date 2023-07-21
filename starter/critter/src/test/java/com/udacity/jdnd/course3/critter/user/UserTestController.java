@@ -38,7 +38,7 @@ public class UserTestController {
     }
 
     public void setAvailability(Set<DayOfWeek> daysAvailable, long employeeId) {
-        testRestTemplate.put(baseUrl + "/employee/" + employeeId, daysAvailable);
+        testRestTemplate.put(baseUrl + "/employee/availability/" + employeeId, daysAvailable);
     }
 
     public EmployeeDTO getEmployee(long employeeId) {

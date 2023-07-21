@@ -1,6 +1,8 @@
 package com.udacity.jdnd.course3.critter.util;
 
 import org.springframework.beans.BeanUtils;
+import org.modelmapper.ModelMapper;
+import org.modelmapper.Conditions;
 
 import java.util.*;
 import java.util.function.Predicate;
@@ -15,6 +17,21 @@ public class BeanUtil {
 
     public static <T> T transferWithIgnoreFields(Object source, T destination, String... ignoreProperties) {
         BeanUtils.copyProperties(source, destination, ignoreProperties);
+        return destination;
+    }
+
+    public static ModelMapper getSimpleMapper() {
+        return new ModelMapper();
+    }
+
+    public static ModelMapper getIgnoreNullMapper() {
+        ModelMapper modelMapper = new ModelMapper();
+        modelMapper.getConfiguration().setPropertyCondition(Conditions.isNotNull());
+        return modelMapper;
+    }
+
+    public static <T> T transferIfNotNull(T source, T destination) {
+        getIgnoreNullMapper().map(source, destination);
         return destination;
     }
 

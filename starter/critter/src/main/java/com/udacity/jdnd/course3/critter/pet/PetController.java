@@ -39,6 +39,12 @@ public class PetController {
     }
 
     @JsonView(PetViews.Public.class)
+    @PutMapping("/{petId}")
+    public PetModel editPet(@PathVariable("petId") PetModel petModel, @RequestBody PetModel request) {
+        return complete(petService.savePet(BeanUtil.transferIfNotNull(request, petModel)));
+    }
+
+    @JsonView(PetViews.Public.class)
     @GetMapping("/{petId}")
     public PetModel getPet(@PathVariable("petId") PetModel petModel) {
         return complete(petModel);

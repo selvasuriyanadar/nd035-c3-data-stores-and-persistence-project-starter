@@ -42,6 +42,18 @@ public class UserController {
     }
 
     @JsonView(CustomerViews.Public.class)
+    @PutMapping("/customer/{customerId}")
+    public CustomerModel editCustomer(@PathVariable("customerId") CustomerModel customerModel, @RequestBody CustomerModel request){
+        return complete(userService.saveCustomer(BeanUtil.transferIfNotNull(request, customerModel)));
+    }
+
+    @JsonView(CustomerViews.Public.class)
+    @GetMapping("/customer/{customerId}")
+    public CustomerModel getCustomer(@PathVariable("customerId") CustomerModel customerModel){
+        return complete(customerModel);
+    }
+
+    @JsonView(CustomerViews.Public.class)
     @GetMapping("/customer")
     public List<CustomerModel> getAllCustomers(){
         return customerRepository.findAll().stream().map(customerModel -> complete(customerModel)).toList();
@@ -68,7 +80,13 @@ public class UserController {
         return userService.saveEmployee(employeeModel);
     }
 
+    @JsonView(EmployeeViews.Public.class)
     @PutMapping("/employee/{employeeId}")
+    public EmployeeModel editEmployee(@PathVariable("employeeId") EmployeeModel employeeModel, @RequestBody EmployeeModel request){
+        return userService.saveEmployee(BeanUtil.transferIfNotNull(request, employeeModel));
+    }
+
+    @PutMapping("/employee/availability/{employeeId}")
     public void updateAvailability(@RequestBody Set<DayOfWeek> daysAvailable, @PathVariable("employeeId") EmployeeModel employeeModel) {
         employeeModel.setDaysAvailable(daysAvailable);
         userService.saveEmployee(employeeModel);
