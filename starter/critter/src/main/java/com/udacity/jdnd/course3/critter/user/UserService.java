@@ -3,6 +3,7 @@ package com.udacity.jdnd.course3.critter.user;
 import com.udacity.jdnd.course3.critter.pet.PetModel;
 import com.udacity.jdnd.course3.critter.pet.PetRepository;
 import com.udacity.jdnd.course3.critter.schedule.ScheduleRepository;
+import com.udacity.jdnd.course3.critter.schedule.ScheduleLogic;
 
 import jakarta.validation.Valid;
 import com.udacity.jdnd.course3.critter.util.BeanUtil;
@@ -34,6 +35,9 @@ public class UserService {
     @Autowired
     private EntityManager entityManager;
 
+    @Autowired
+    private ScheduleLogic scheduleLogic;
+
     @Transactional
     public CustomerModel saveCustomer(@Valid CustomerModel customerModel) {
         return customerRepository.save(customerModel);
@@ -41,22 +45,19 @@ public class UserService {
 
     @Transactional
     public EmployeeModel saveEmployee(@Valid EmployeeModel employeeModel) {
+        scheduleLogic.updateEmployee(employeeModel);
         return employeeRepository.save(employeeModel);
     }
 
     @Transactional
     public void deleteCustomer(CustomerModel model) {
-        if (scheduleRepository.existsByCustomerIdAndGreaterThanOrEqualToDate(model.getId(), LocalDate.now())) {
-            throw new IllegalStateException("The customer has some pets scheduled for some activities.");
-        }
+        scheduleLogic.removeCustomer(model);
         customerRepository.delete(model);
     }
 
     @Transactional
     public void deleteEmployee(EmployeeModel model) {
-        if (scheduleRepository.existsByEmployeeIdAndGreaterThanOrEqualToDate(model.getId(), LocalDate.now())) {
-            throw new IllegalStateException("The employee has been scheduled for some activities.");
-        }
+        scheduleLogic.removeEmployee(model);
         employeeRepository.delete(model);
     }
 

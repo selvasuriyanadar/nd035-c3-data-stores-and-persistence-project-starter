@@ -3,6 +3,7 @@ package com.udacity.jdnd.course3.critter.pet;
 import com.udacity.jdnd.course3.critter.user.CustomerModel;
 import com.udacity.jdnd.course3.critter.user.CustomerRepository;
 import com.udacity.jdnd.course3.critter.schedule.ScheduleRepository;
+import com.udacity.jdnd.course3.critter.schedule.ScheduleLogic;
 
 import jakarta.validation.Valid;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -33,21 +34,24 @@ public class PetService {
     @Autowired
     private PetTypeRepository petTypeRepository;
 
+    @Autowired
+    private ScheduleLogic scheduleLogic;
+
     @Transactional
     public PetModel savePet(@Valid PetModel model) {
+        scheduleLogic.updatePet(model);
         return petRepository.save(model);
     }
 
     @Transactional
     public void deletePet(PetModel model) {
-        if (scheduleRepository.existsByPetIdAndGreaterThanOrEqualToDate(model.getId(), LocalDate.now())) {
-            throw new IllegalStateException("The pet is scheduled for some activities.");
-        }
+        scheduleLogic.removePet(model);
         petRepository.delete(model);
     }
 
     @Transactional
     public PetTypeModel configurePetType(@Valid PetTypeModel model) {
+        scheduleLogic.updatePetType(model);
         return petTypeRepository.save(model);
     }
 

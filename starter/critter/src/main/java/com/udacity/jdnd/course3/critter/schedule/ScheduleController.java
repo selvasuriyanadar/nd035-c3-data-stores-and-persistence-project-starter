@@ -33,7 +33,7 @@ public class ScheduleController {
     @JsonView(ScheduleViews.Public.class)
     @PostMapping
     public ScheduleModel createSchedule(@RequestBody ScheduleModel scheduleModel) {
-        return complete(scheduleService.createSchedule(scheduleModel));
+        return complete(scheduleService.saveSchedule(scheduleModel));
     }
 
     @JsonView(ScheduleViews.Public.class)

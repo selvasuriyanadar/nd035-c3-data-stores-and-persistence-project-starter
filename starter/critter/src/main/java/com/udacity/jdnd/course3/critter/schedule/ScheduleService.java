@@ -1,9 +1,10 @@
 package com.udacity.jdnd.course3.critter.schedule;
 
 import com.udacity.jdnd.course3.critter.user.EmployeeModel;
-import com.udacity.jdnd.course3.critter.pet.PetModel;
 import com.udacity.jdnd.course3.critter.user.EmployeeRepository;
+import com.udacity.jdnd.course3.critter.pet.PetModel;
 import com.udacity.jdnd.course3.critter.pet.PetRepository;
+import com.udacity.jdnd.course3.critter.schedule.ScheduleLogic;
 
 import jakarta.validation.Valid;
 import com.udacity.jdnd.course3.critter.util.BeanUtil;
@@ -31,8 +32,12 @@ public class ScheduleService {
     @Autowired
     private PetRepository petRepository;
 
+    @Autowired
+    private ScheduleLogic scheduleLogic;
+
     @Transactional
-    public ScheduleModel createSchedule(@Valid ScheduleModel scheduleModel) {
+    public ScheduleModel saveSchedule(@Valid ScheduleModel scheduleModel) {
+        scheduleLogic.schedule(scheduleModel);
         return scheduleRepository.save(scheduleModel);
     }
 

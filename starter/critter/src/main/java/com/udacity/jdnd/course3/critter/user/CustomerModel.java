@@ -42,42 +42,4 @@ public class CustomerModel extends UserModel {
     @Transient
     private Set<Long> petIds;
 
-    /*@Override
-    public boolean equals(Object obj) {
-        return BeanUtil.checkEqualsById(this, obj, CustomerModel::getId);
-    }
-
-    @Override
-    public int hashCode() {
-        return BeanUtil.hashById(getId());
-    }
-
-    public String getPhoneNumber() {
-        return phoneNumber;
-    }
-
-    public void setPhoneNumber(String phoneNumber) {
-        this.phoneNumber = phoneNumber;
-    }
-
-    public String getNotes() {
-        return notes;
-    }
-
-    public void setNotes(String notes) {
-        this.notes = notes;
-    }
-
-    public Set<PetModel> getPets() {
-        return pets;
-    }
-
-    public void setPets(Set<PetModel> pets) {
-        this.pets = pets;
-    }
-
-    public void setPetIds(Set<Long> petIds) {
-        this.petIds = petIds;
-    }*/
-
 }

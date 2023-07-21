@@ -5,10 +5,12 @@ import com.udacity.jdnd.course3.critter.pet.PetModel;
 
 import org.junit.jupiter.api.Assertions;
 import org.springframework.boot.test.context.SpringBootTest;
+import org.springframework.transaction.annotation.Transactional;
 import org.junit.jupiter.api.Test;
 
 import java.util.*;
 
+@Transactional
 @SpringBootTest
 public class CritterGeneralTest {
 

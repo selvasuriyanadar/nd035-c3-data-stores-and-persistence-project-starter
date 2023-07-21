@@ -34,7 +34,7 @@ public class PetController {
 
     @JsonView(PetViews.Public.class)
     @PostMapping
-    public PetModel savePet(@RequestBody PetModel petModel) {
+    public PetModel createPet(@RequestBody PetModel petModel) {
         return complete(petService.savePet(petModel));
     }
 

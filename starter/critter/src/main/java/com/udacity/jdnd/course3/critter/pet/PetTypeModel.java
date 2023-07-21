@@ -32,6 +32,8 @@ public class PetTypeModel {
     private PetType type;
 
     @NotEmpty(message = "Relevent Activities are required.")
+    @Enumerated(EnumType.STRING)
+    @ElementCollection
     private Set<@NotNull EmployeeSkill> releventActivities;
 
     public PetTypeModel(PetType type) {

@@ -37,7 +37,7 @@ public class UserController {
 
     @JsonView(CustomerViews.Public.class)
     @PostMapping("/customer")
-    public CustomerModel saveCustomer(@RequestBody CustomerModel customerModel){
+    public CustomerModel createCustomer(@RequestBody CustomerModel customerModel){
         return complete(userService.saveCustomer(customerModel));
     }
 
@@ -64,12 +64,12 @@ public class UserController {
 
     @JsonView(EmployeeViews.Public.class)
     @PostMapping("/employee")
-    public EmployeeModel saveEmployee(@RequestBody EmployeeModel employeeModel) {
+    public EmployeeModel createEmployee(@RequestBody EmployeeModel employeeModel) {
         return userService.saveEmployee(employeeModel);
     }
 
     @PutMapping("/employee/{employeeId}")
-    public void setAvailability(@RequestBody Set<DayOfWeek> daysAvailable, @PathVariable("employeeId") EmployeeModel employeeModel) {
+    public void updateAvailability(@RequestBody Set<DayOfWeek> daysAvailable, @PathVariable("employeeId") EmployeeModel employeeModel) {
         employeeModel.setDaysAvailable(daysAvailable);
         userService.saveEmployee(employeeModel);
     }
