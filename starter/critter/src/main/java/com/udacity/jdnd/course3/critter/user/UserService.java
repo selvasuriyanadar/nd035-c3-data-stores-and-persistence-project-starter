@@ -4,6 +4,7 @@ import com.udacity.jdnd.course3.critter.pet.PetModel;
 import com.udacity.jdnd.course3.critter.pet.PetRepository;
 import com.udacity.jdnd.course3.critter.schedule.ScheduleRepository;
 import com.udacity.jdnd.course3.critter.schedule.ScheduleLogic;
+import com.udacity.jdnd.course3.critter.schedule.ScheduleModel;
 
 import jakarta.validation.Valid;
 import com.udacity.jdnd.course3.critter.util.BeanUtil;
@@ -59,6 +60,9 @@ public class UserService {
     public void deleteEmployee(EmployeeModel model) {
         scheduleLogic.removeEmployee(model);
         employeeRepository.delete(model);
+        for (ScheduleModel schedule : model.getSchedules()) {
+            schedule.getEmployees().remove(model);
+        }
     }
 
 }

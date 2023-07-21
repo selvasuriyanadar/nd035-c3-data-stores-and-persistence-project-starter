@@ -4,6 +4,7 @@ import com.udacity.jdnd.course3.critter.user.CustomerModel;
 import com.udacity.jdnd.course3.critter.user.CustomerRepository;
 import com.udacity.jdnd.course3.critter.schedule.ScheduleRepository;
 import com.udacity.jdnd.course3.critter.schedule.ScheduleLogic;
+import com.udacity.jdnd.course3.critter.schedule.ScheduleModel;
 
 import jakarta.validation.Valid;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -47,6 +48,9 @@ public class PetService {
     public void deletePet(PetModel model) {
         scheduleLogic.removePet(model);
         petRepository.delete(model);
+        for (ScheduleModel schedule : model.getSchedules()) {
+            schedule.getPets().remove(model);
+        }
     }
 
     @Transactional

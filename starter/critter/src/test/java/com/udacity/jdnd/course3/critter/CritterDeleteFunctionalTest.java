@@ -123,6 +123,17 @@ public class CritterDeleteFunctionalTest {
      */
     @Test
     public void testDeleteSchedule() {
+        ScheduleDTO sched0 = populateSchedule(1, 2, LocalDate.of(2019, 12, 25), Sets.newHashSet(EmployeeSkill.FEEDING, EmployeeSkill.WALKING));
+
+        // verifying if the employees and pets of an old schedule can be deleted successfully
+        for (Long id : sched0.getEmployeeIds()) {
+            Assertions.assertDoesNotThrow(() -> userController.deleteEmployee(id));
+        }
+        for (Long id : sched0.getPetIds()) {
+            Assertions.assertDoesNotThrow(() -> petController.deletePet(id));
+        }
+        scheduleController.deleteSchedule(sched0.getId());
+
         ScheduleDTO sched1 = populateSchedule(1, 2, LocalDate.of(2019, 12, 25), Sets.newHashSet(EmployeeSkill.FEEDING, EmployeeSkill.WALKING));
 
         // check if the schedule disappears

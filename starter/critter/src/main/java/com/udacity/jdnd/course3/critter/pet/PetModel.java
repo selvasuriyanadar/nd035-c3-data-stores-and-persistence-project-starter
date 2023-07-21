@@ -2,6 +2,7 @@ package com.udacity.jdnd.course3.critter.pet;
 
 import com.udacity.jdnd.course3.critter.user.EmployeeSkill;
 import com.udacity.jdnd.course3.critter.user.CustomerModel;
+import com.udacity.jdnd.course3.critter.schedule.ScheduleModel;
 
 import com.udacity.jdnd.course3.critter.util.BeanUtil;
 import com.fasterxml.jackson.annotation.JsonProperty;
@@ -69,5 +70,9 @@ public class PetModel {
     @JsonView(PetViews.Public.class)
     @Column(length = 1000)
     private String notes;
+
+    @JsonIgnore
+    @ManyToMany(mappedBy = "pets")
+    private Set<ScheduleModel> schedules;
 
 }

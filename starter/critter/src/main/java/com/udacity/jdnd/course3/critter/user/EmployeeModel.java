@@ -1,10 +1,13 @@
 package com.udacity.jdnd.course3.critter.user;
 
+import com.udacity.jdnd.course3.critter.schedule.ScheduleModel;
+
 import com.udacity.jdnd.course3.critter.util.BeanUtil;
 import org.hibernate.annotations.GenericGenerator;
 import jakarta.validation.constraints.NotEmpty;
 import jakarta.validation.constraints.NotNull;
 import com.fasterxml.jackson.annotation.JsonView;
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import jakarta.persistence.*;
 import lombok.Data;
 import lombok.NoArgsConstructor;
@@ -30,5 +33,9 @@ public class EmployeeModel extends UserModel {
     @ElementCollection
     @Enumerated(EnumType.STRING)
     private Set<@NotNull DayOfWeek> daysAvailable;
+
+    @JsonIgnore
+    @ManyToMany(mappedBy = "employees")
+    private Set<ScheduleModel> schedules;
 
 }
